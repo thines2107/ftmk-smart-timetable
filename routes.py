@@ -913,15 +913,19 @@ def api_generate_timetable():
             
         groups_dict = {}
         for c in classes:
-            g = c.group_name
-            if g not in groups_dict:
-                groups_dict[g] = {'group_name': g, 'subject': subj, 'course_code': c.course_code, 'classes': []}
-            groups_dict[g]['classes'].append(c.to_dict())
+            # Group by both course code and group name to prevent cross-course merging of "S1G1"
+            g_key = f"{c.course_code}_{c.group_name}"
+            if g_key not in groups_dict:
+                groups_dict[g_key] = {'group_name': c.group_name, 'subject': subj, 'course_code': c.course_code, 'classes': []}
+            groups_dict[g_key]['classes'].append(c.to_dict())
             
         # Prioritization Filter: If legitimate groups exist, remove the fallback UNKNOWN GROUP
-        valid_groups = [g for g in groups_dict.keys() if g != "UNKNOWN GROUP"]
-        if valid_groups and "UNKNOWN GROUP" in groups_dict:
-            del groups_dict["UNKNOWN GROUP"]
+        valid_groups = [g for g in groups_dict.keys() if "UNKNOWN GROUP" not in g.upper()]
+        if valid_groups:
+            # Delete any keys containing UNKNOWN GROUP
+            keys_to_delete = [k for k in groups_dict.keys() if "UNKNOWN GROUP" in k.upper()]
+            for k in keys_to_delete:
+                del groups_dict[k]
             
         # STRICT LEC/LAB VALIDATION
         # Filter out any group bundle that is missing a required class type
