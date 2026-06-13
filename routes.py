@@ -883,6 +883,7 @@ def api_generate_timetable():
     free_day = data.get('free_day', '')
     preferred_group = data.get('preferred_group', '')
     blocked_rules = data.get('blocked_rules', [])
+    allow_cross_course = data.get('allow_cross_course', False)
     
     if not selected_subjects:
         return jsonify({'error': 'No subjects selected'}), 400
@@ -900,7 +901,11 @@ def api_generate_timetable():
     for subj in selected_subjects:
         base_query = Timetable.query.filter_by(subject_code=subj)
         
-        classes = base_query.all()
+        if not allow_cross_course and student_course:
+            classes = base_query.filter_by(course_code=student_course).all()
+        else:
+            classes = base_query.all()
+            
         if not classes:
             continue
             

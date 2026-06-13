@@ -358,7 +358,7 @@ function addBlacklistRule() {
     container.appendChild(ruleRow);
 }
 
-function generateTimetable() {
+function generateTimetable(allowCrossCourse = false) {
     const checkboxes = document.querySelectorAll('input[name="subjects"]:checked');
     const subjects = Array.from(checkboxes).map(cb => cb.value);
     
@@ -400,7 +400,8 @@ function generateTimetable() {
             no_morning: prefNoMorning,
             free_day: prefFreeDay,
             preferred_group: prefSection,
-            blocked_rules: blacklistRules
+            blocked_rules: blacklistRules,
+            allow_cross_course: allowCrossCourse
         })
     })
     .then(r => r.json())
@@ -414,8 +415,28 @@ function generateTimetable() {
         wrapper.innerHTML = '';
         
         if (data.error || !data.valid_combinations || data.valid_combinations.length === 0) {
-            wrapper.innerHTML = '<p style="color: var(--error)">No conflict-free combinations available for the selected subjects.</p>';
-            return;
+            if (!allowCrossCourse) {
+                Swal.fire({
+                    title: 'No Same-Course Options Found',
+                    text: 'We couldn\\'t find a timetable within your own course that strictly satisfies your preferences. Would you like to try borrowing class groups from other courses?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, try other courses',
+                    cancelButtonText: 'No, cancel',
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        generateTimetable(true);
+                    } else {
+                        wrapper.innerHTML = '<p style="color: var(--error)">No conflict-free combinations available for the selected subjects.</p>';
+                    }
+                });
+                return;
+            } else {
+                wrapper.innerHTML = '<p style="color: var(--error)">No conflict-free combinations available for the selected subjects.</p>';
+                return;
+            }
         }
         
         const warningBox = document.getElementById('preferred-group-warning');
@@ -536,7 +557,7 @@ function generateTimetable() {
                         td.innerHTML = `
                             <div class="cell-content">
                                 <span class="cell-subject">${cell.subject_code}</span>
-                                <span class="cell-meta">${cell.class_type} | ${cell.group_name} | ${cell.room}</span>
+                                <span class="cell-meta">${cell.class_type} | ${cell.group_name} ${cell.course_code ? '(' + cell.course_code + ')' : ''} | ${cell.room}</span>
                                 <span class="cell-meta" style="font-weight: 500;">
                                     ${cell.lecturer_name ? `<a href="#" onclick="draftLecturerEmail(event, ${index}, '${cell.subject_code}', '${cell.lecturer_name.replace(/'/g, "\\'")}'); return false;" style="color: #0284c7; text-decoration: underline; cursor: pointer;">${cell.lecturer_name}</a>` : ''}
                                 </span>
