@@ -416,22 +416,11 @@ function generateTimetable(allowCrossCourse = false) {
         
         if (data.error || !data.valid_combinations || data.valid_combinations.length === 0) {
             if (!allowCrossCourse) {
-                Swal.fire({
-                    title: 'No Same-Course Options Found',
-                    text: 'We couldn\\'t find a timetable within your own course that strictly satisfies your preferences. Would you like to try borrowing class groups from other courses?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, try other courses',
-                    cancelButtonText: 'No, cancel',
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        generateTimetable(true);
-                    } else {
-                        wrapper.innerHTML = '<p style="color: var(--error)">No conflict-free combinations available for the selected subjects.</p>';
-                    }
-                });
+                if (confirm('We could not find a timetable within your own course that strictly satisfies your preferences. Would you like to try borrowing class groups from other courses?')) {
+                    generateTimetable(true);
+                } else {
+                    wrapper.innerHTML = '<p style="color: var(--error)">No conflict-free combinations available for the selected subjects.</p>';
+                }
                 return;
             } else {
                 wrapper.innerHTML = '<p style="color: var(--error)">No conflict-free combinations available for the selected subjects.</p>';
