@@ -900,16 +900,9 @@ def api_generate_timetable():
     for subj in selected_subjects:
         base_query = Timetable.query.filter_by(subject_code=subj)
         
-        # Smart Filter: Attempt to fetch classes specific to the student's course
-        if student_course:
-            course_specific_classes = base_query.filter_by(course_code=student_course).all()
-            if course_specific_classes:
-                classes = course_specific_classes
-            else:
-                # Fallback: If no classes exist for this specific course, fallback to all (e.g. elective)
-                classes = base_query.all()
-        else:
-            classes = base_query.all()
+        classes = base_query.all()
+        if not classes:
+            continue
             
         if not classes:
             continue
@@ -922,7 +915,7 @@ def api_generate_timetable():
         for c in classes:
             g = c.group_name
             if g not in groups_dict:
-                groups_dict[g] = {'group_name': g, 'subject': subj, 'classes': []}
+                groups_dict[g] = {'group_name': g, 'subject': subj, 'course_code': c.course_code, 'classes': []}
             groups_dict[g]['classes'].append(c.to_dict())
             
         # Prioritization Filter: If legitimate groups exist, remove the fallback UNKNOWN GROUP
@@ -1024,7 +1017,8 @@ def api_generate_timetable():
         no_night=no_night, 
         no_morning=no_morning, 
         free_day=free_day,
-        preferred_group=preferred_group
+        preferred_group=preferred_group,
+        student_course=student_course
     )
     
     return jsonify({

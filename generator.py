@@ -10,7 +10,7 @@ def check_clash(class1, class2):
             return True
     return False
 
-def generate_combinations(subjects_data, no_night=False, no_morning=False, free_day='', preferred_group=''):
+def generate_combinations(subjects_data, no_night=False, no_morning=False, free_day='', preferred_group='', student_course=''):
     """
     subjects_data is a dictionary where the key is the subject_code and the value 
     is a list of all distinct group bundles (Lectures and Labs) for that subject.
@@ -24,8 +24,10 @@ def generate_combinations(subjects_data, no_night=False, no_morning=False, free_
         preferred_group = preferred_group.upper()
     
     for subject_code, groups_list in subjects_data.items():
-        if preferred_group:
-            groups_list.sort(key=lambda x: 0 if preferred_group in x.get('group_name', '').upper() else 1)
+        groups_list.sort(key=lambda x: (
+            0 if preferred_group and preferred_group in x.get('group_name', '').upper() else 1,
+            0 if student_course and student_course == x.get('course_code', '') else 1
+        ))
             
         valid_groups = []
         for group_bundle in groups_list:
@@ -47,10 +49,9 @@ def generate_combinations(subjects_data, no_night=False, no_morning=False, free_
             if not violates:
                 valid_groups.append(group_bundle)
                 
-        if valid_groups:
-            combinatorial_list.append(valid_groups)
-        else:
-            combinatorial_list.append(groups_list)
+        # Strictly enforce preferences. If a subject has NO valid groups, 
+        # combinatorial_list gets an empty list, and 0 results are returned.
+        combinatorial_list.append(valid_groups)
             
     combo_generator = itertools.product(*combinatorial_list)
     
