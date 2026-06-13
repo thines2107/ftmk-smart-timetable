@@ -24,49 +24,58 @@ def generate_combinations(subjects_data, no_night=False, no_morning=False, free_
     """
     combinatorial_list = []
     
-    for subject_code, groups_list in subjects_data.items():
-        combinatorial_list.append(groups_list)
-        
-    # Cartesian product generates all possible combinations picking one group per subject
-    all_combinations = list(itertools.product(*combinatorial_list))
-    
-    valid_timetables = []
     fmt = '%H:%M'
     night_limit = datetime.strptime('20:00', fmt)
     morning_limit = datetime.strptime('10:00', fmt)
     
-    for combo in all_combinations:
-        # combo is a tuple of group bundles (one for each subject)
+    if preferred_group:
+        preferred_group = preferred_group.upper()
+    
+    for subject_code, groups_list in subjects_data.items():
+        # Optimization 1: Sort by preferred group so itertools checks them first
+        if preferred_group:
+            groups_list.sort(key=lambda x: 0 if preferred_group in x.get('group_name', '').upper() else 1)
+            
+        # Optimization 2: Pre-filter groups that violate hard preferences
+        valid_groups = []
+        for group_bundle in groups_list:
+            violates = False
+            if 'classes' in group_bundle:
+                for c in group_bundle['classes']:
+                    if c['day'] == free_day: violates = True
+                    start_dt = datetime.strptime(c['start_time'], fmt)
+                    end_dt = datetime.strptime(c['end_time'], fmt)
+                    if no_night and (start_dt >= night_limit or end_dt > night_limit): violates = True
+                    if no_morning and (start_dt < morning_limit): violates = True
+            if not violates:
+                valid_groups.append(group_bundle)
+                
+        # Fallback to all groups if strict preferences filter out everything for a subject
+        if valid_groups:
+            combinatorial_list.append(valid_groups)
+        else:
+            combinatorial_list.append(groups_list)
+            
+    # Optimization 3: Use a generator, DO NOT cast to list!
+    combo_generator = itertools.product(*combinatorial_list)
+    
+    valid_timetables = []
+    
+    combinations_checked = 0
+    MAX_CHECKS = 100000  # Strict CPU timeout prevention
+    MAX_RESULTS = 200    # Stop early if we have enough valid timetables
+    
+    for combo in combo_generator:
+        combinations_checked += 1
+        if combinations_checked > MAX_CHECKS:
+            break
+            
         flat_classes = []
         for group_bundle in combo:
             if 'classes' in group_bundle:
                 flat_classes.extend(group_bundle['classes'])
                 
-        # 1. Apply Preferences Filters
-        violates_preferences = False
-        for c in flat_classes:
-            c_day = c['day']
-            if c_day == free_day:
-                violates_preferences = True
-                break
-                
-            start_dt = datetime.strptime(c['start_time'], fmt)
-            end_dt = datetime.strptime(c['end_time'], fmt)
-            
-            # No Night: After 8 PM
-            if no_night and (start_dt >= night_limit or end_dt > night_limit):
-                violates_preferences = True
-                break
-                
-            # No Morning: Before 10 AM
-            if no_morning and (start_dt < morning_limit):
-                violates_preferences = True
-                break
-                
-        if violates_preferences:
-            continue
-            
-        # 2. Check all pairs for time clashes
+        # Check all pairs for time clashes
         has_clash = False
         for i in range(len(flat_classes)):
             for j in range(i+1, len(flat_classes)):
@@ -79,7 +88,7 @@ def generate_combinations(subjects_data, no_night=False, no_morning=False, free_
         if has_clash:
             continue
             
-        # 3. Gap Score Calculation (Optimization)
+        # Gap Score Calculation (Optimization)
         day_map = {}
         for c in flat_classes:
             d = c['day']
@@ -89,9 +98,7 @@ def generate_combinations(subjects_data, no_night=False, no_morning=False, free_
             
         total_gap_minutes = 0
         for d, classes in day_map.items():
-            # Sort classes for the day chronologically
             classes.sort(key=lambda x: datetime.strptime(x['start_time'], fmt))
-            
             for i in range(len(classes) - 1):
                 c1_end = datetime.strptime(classes[i]['end_time'], fmt)
                 c2_start = datetime.strptime(classes[i+1]['start_time'], fmt)
@@ -99,24 +106,22 @@ def generate_combinations(subjects_data, no_night=False, no_morning=False, free_
                 if gap > 0:
                     total_gap_minutes += gap
                     
-        # Store combo along with its gap score
         valid_timetables.append({
             'combo': combo,
             'gap_score': total_gap_minutes
         })
         
-    # 4. Priority Group Scoring Bonus
+        if len(valid_timetables) >= MAX_RESULTS:
+            break
+            
+    # Priority Group Scoring Bonus
     if preferred_group:
-        preferred_group = preferred_group.upper()
         for vt in valid_timetables:
             non_preferred_count = 0
             for bundle in vt['combo']:
-                # bundle['group_name'] could be e.g. "S1G1"
                 g_name = bundle.get('group_name', '').upper()
                 if preferred_group not in g_name:
                     non_preferred_count += 1
-            
-            # Massive mathematical penalty for every subject that doesn't use the preferred group
             vt['gap_score'] += (non_preferred_count * 100000)
             vt['non_preferred_count'] = non_preferred_count
         
@@ -132,7 +137,8 @@ def generate_combinations(subjects_data, no_night=False, no_morning=False, free_
         perfect_match = True
             
     # Extract just the combinations from the sorted list
+    # Only return the top 15 to save network bandwidth and browser rendering memory
     return {
-        'combinations': [t['combo'] for t in valid_timetables],
+        'combinations': [t['combo'] for t in valid_timetables[:15]],
         'perfect_match': perfect_match
     }
