@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const newTheme = isDark ? 'light' : 'dark';
             
             document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('app-theme', newTheme);
+            localStorage.setItem('timetable-theme', newTheme);
             
             if (newTheme === 'dark') {
                 icon.classList.replace('bx-moon', 'bx-sun');
