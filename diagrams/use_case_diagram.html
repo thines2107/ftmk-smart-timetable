@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Use Case Diagram – FTMK Smart Timetable Arrangement System</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#fff; font-family:'Inter',sans-serif; padding:28px; }
+    h1   { text-align:center; font-size:20px; font-weight:700; color:#000; margin-bottom:5px; }
+    .sub { text-align:center; font-size:12px; color:#444; margin-bottom:18px; }
+    .dia { display:flex; justify-content:center; }
+    .foot{ text-align:center; margin-top:14px; font-size:11px; color:#666; }
+  </style>
+</head>
+<body>
+  <h1>Use Case Diagram</h1>
+  <p class="sub">FTMK Smart Timetable Arrangement System &nbsp;|&nbsp; BITU 3973 Final Year Project I</p>
+  <div class="dia">
+
+  <svg viewBox="0 0 1200 830" width="1200" height="830"
+       xmlns="http://www.w3.org/2000/svg"
+       style="font-family:'Inter',sans-serif;">
+
+    <!-- ▌ Background -->
+    <rect width="1200" height="830" fill="#ffffff"/>
+
+    <!-- ▌ System Boundary -->
+    <rect x="148" y="28" width="904" height="710" rx="10"
+          fill="white" stroke="#000000" stroke-width="2.5"/>
+    <!-- Header bar -->
+    <rect x="148" y="28" width="904" height="46" rx="10" fill="#000000"/>
+    <rect x="148" y="54"  width="904" height="20"  fill="#000000"/>
+    <text x="600" y="57" text-anchor="middle" font-size="13.5" font-weight="700" fill="white">
+      FTMK Smart Timetable Arrangement System
+    </text>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  CONNECTION LINES                           -->
+    <!-- ═══════════════════════════════════════════ -->
+
+    <!-- Student (x=80, y=375) ─── solid lines -->
+    <line x1="80" y1="375" x2="240" y2="152" stroke="#000" stroke-width="1.4"/>
+    <line x1="80" y1="375" x2="490" y2="152" stroke="#000" stroke-width="1.4"/>
+    <line x1="80" y1="375" x2="240" y2="245" stroke="#000" stroke-width="1.4"/>
+    <line x1="80" y1="375" x2="240" y2="337" stroke="#000" stroke-width="1.4"/>
+    <line x1="80" y1="375" x2="240" y2="428" stroke="#000" stroke-width="1.4"/>
+    <line x1="80" y1="375" x2="240" y2="518" stroke="#000" stroke-width="1.4"/>
+    <line x1="80" y1="375" x2="240" y2="607" stroke="#000" stroke-width="1.4"/>
+    <line x1="80" y1="375" x2="485" y2="695" stroke="#000" stroke-width="1.4"/>
+
+    <!-- Admin (x=1120, y=258) ─── solid lines -->
+    <line x1="1120" y1="258" x2="710" y2="152" stroke="#000" stroke-width="1.4"/>
+    <line x1="1120" y1="258" x2="965" y2="152" stroke="#000" stroke-width="1.4"/>
+    <line x1="1120" y1="258" x2="965" y2="337" stroke="#000" stroke-width="1.4"/>
+    <line x1="1120" y1="258" x2="965" y2="428" stroke="#000" stroke-width="1.4"/>
+    <line x1="1120" y1="258" x2="715" y2="695" stroke="#000" stroke-width="1.4"/>
+
+    <!-- System box (x=1095) ─── dashed lines -->
+    <line x1="1095" y1="478" x2="965" y2="245" stroke="#000" stroke-width="1.4" stroke-dasharray="6,3"/>
+    <line x1="1095" y1="500" x2="965" y2="518" stroke="#000" stroke-width="1.4" stroke-dasharray="6,3"/>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  USE CASE ELLIPSES — all white fill, black border -->
+    <!-- ═══════════════════════════════════════════ -->
+
+    <!-- ── LEFT COLUMN (x=350) ───────────────────── -->
+
+    <!-- UC01 Register Account -->
+    <ellipse cx="350" cy="152" rx="110" ry="30" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="350" y="145" text-anchor="middle" font-size="9.5" font-weight="700" fill="#000">UC01</text>
+    <text x="350" y="160" text-anchor="middle" font-size="11"  fill="#000">Register Account</text>
+
+    <!-- UC03 Select Subjects -->
+    <ellipse cx="350" cy="245" rx="110" ry="30" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="350" y="238" text-anchor="middle" font-size="9.5" font-weight="700" fill="#000">UC03</text>
+    <text x="350" y="253" text-anchor="middle" font-size="11"  fill="#000">Select Subjects</text>
+
+    <!-- UC04 Set Preferences & Blacklist Rules -->
+    <ellipse cx="350" cy="337" rx="110" ry="30" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="350" y="327" text-anchor="middle" font-size="9.5" font-weight="700" fill="#000">UC04</text>
+    <text x="350" y="340" text-anchor="middle" font-size="10"  fill="#000">Set Preferences &amp;</text>
+    <text x="350" y="353" text-anchor="middle" font-size="10"  fill="#000">Blacklist Rules</text>
+
+    <!-- UC06 View Timetable Grid -->
+    <ellipse cx="350" cy="428" rx="110" ry="30" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="350" y="421" text-anchor="middle" font-size="9.5" font-weight="700" fill="#000">UC06</text>
+    <text x="350" y="436" text-anchor="middle" font-size="11"  fill="#000">View Timetable Grid</text>
+
+    <!-- UC07 Save Favourite Timetable -->
+    <ellipse cx="350" cy="518" rx="110" ry="30" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="350" y="511" text-anchor="middle" font-size="9.5" font-weight="700" fill="#000">UC07</text>
+    <text x="350" y="526" text-anchor="middle" font-size="11"  fill="#000">Save Favourite Timetable</text>
+
+    <!-- UC08 Export Timetable as PNG -->
+    <ellipse cx="350" cy="607" rx="110" ry="30" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="350" y="598" text-anchor="middle" font-size="9.5" font-weight="700" fill="#000">UC08</text>
+    <text x="350" y="611" text-anchor="middle" font-size="10"  fill="#000">Export Timetable</text>
+    <text x="350" y="624" text-anchor="middle" font-size="10"  fill="#000">as PNG</text>
+
+    <!-- ── CENTER COLUMN (x=600) — Shared ───────── -->
+
+    <!-- UC02 Login to System -->
+    <ellipse cx="600" cy="152" rx="110" ry="30" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="600" y="145" text-anchor="middle" font-size="9.5" font-weight="700" fill="#000">UC02</text>
+    <text x="600" y="160" text-anchor="middle" font-size="11"  fill="#000">Login to System</text>
+
+    <!-- UC13 View Analytical Report -->
+    <ellipse cx="600" cy="695" rx="118" ry="30" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="600" y="688" text-anchor="middle" font-size="9.5" font-weight="700" fill="#000">UC13</text>
+    <text x="600" y="703" text-anchor="middle" font-size="11"  fill="#000">View Analytical Report</text>
+
+    <!-- ── RIGHT COLUMN (x=850) ──────────────────── -->
+
+    <!-- UC09 Upload Timetable PDF -->
+    <ellipse cx="850" cy="152" rx="118" ry="30" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="850" y="145" text-anchor="middle" font-size="9.5" font-weight="700" fill="#000">UC09</text>
+    <text x="850" y="160" text-anchor="middle" font-size="11"  fill="#000">Upload Timetable PDF</text>
+
+    <!-- UC10 Extract & Store Timetable Data (System) -->
+    <ellipse cx="850" cy="245" rx="118" ry="30" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="850" y="235" text-anchor="middle" font-size="9.5" font-weight="700" fill="#000">UC10</text>
+    <text x="850" y="249" text-anchor="middle" font-size="10"  fill="#000">Extract &amp; Store</text>
+    <text x="850" y="262" text-anchor="middle" font-size="10"  fill="#000">Timetable Data from PDF</text>
+
+    <!-- UC11 Manage Timetable Records -->
+    <ellipse cx="850" cy="337" rx="118" ry="30" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="850" y="330" text-anchor="middle" font-size="9.5" font-weight="700" fill="#000">UC11</text>
+    <text x="850" y="345" text-anchor="middle" font-size="11"  fill="#000">Manage Timetable Records</text>
+
+    <!-- UC12 Manage Student Accounts -->
+    <ellipse cx="850" cy="428" rx="118" ry="30" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="850" y="421" text-anchor="middle" font-size="9.5" font-weight="700" fill="#000">UC12</text>
+    <text x="850" y="436" text-anchor="middle" font-size="11"  fill="#000">Manage Student Accounts</text>
+
+    <!-- UC05 Generate Timetable Options (System) -->
+    <ellipse cx="850" cy="518" rx="118" ry="30" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="850" y="508" text-anchor="middle" font-size="9.5" font-weight="700" fill="#000">UC05</text>
+    <text x="850" y="522" text-anchor="middle" font-size="10"  fill="#000">Generate Conflict-Free</text>
+    <text x="850" y="535" text-anchor="middle" font-size="10"  fill="#000">Timetable Options</text>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  ACTORS — all black strokes, white fill     -->
+    <!-- ═══════════════════════════════════════════ -->
+
+    <!-- STUDENT (left) -->
+    <circle cx="55" cy="338" r="17" fill="white" stroke="#000" stroke-width="2"/>
+    <line x1="55" y1="355" x2="55"  y2="390" stroke="#000" stroke-width="2"/>
+    <line x1="55" y1="366" x2="27"  y2="378" stroke="#000" stroke-width="2"/>
+    <line x1="55" y1="366" x2="83"  y2="378" stroke="#000" stroke-width="2"/>
+    <line x1="55" y1="390" x2="36"  y2="418" stroke="#000" stroke-width="2"/>
+    <line x1="55" y1="390" x2="74"  y2="418" stroke="#000" stroke-width="2"/>
+    <text x="55" y="438" text-anchor="middle" font-size="13" font-weight="700" fill="#000">Student</text>
+
+    <!-- ADMIN (right, upper) -->
+    <circle cx="1145" cy="215" r="17" fill="white" stroke="#000" stroke-width="2"/>
+    <line x1="1145" y1="232" x2="1145" y2="265" stroke="#000" stroke-width="2"/>
+    <line x1="1145" y1="244" x2="1117" y2="256" stroke="#000" stroke-width="2"/>
+    <line x1="1145" y1="244" x2="1173" y2="256" stroke="#000" stroke-width="2"/>
+    <line x1="1145" y1="265" x2="1127" y2="292" stroke="#000" stroke-width="2"/>
+    <line x1="1145" y1="265" x2="1163" y2="292" stroke="#000" stroke-width="2"/>
+    <text x="1145" y="312" text-anchor="middle" font-size="13" font-weight="700" fill="#000">Admin</text>
+
+    <!-- SYSTEM (right, lower — box actor) -->
+    <rect x="1093" y="462" width="104" height="56" rx="5"
+          fill="white" stroke="#000" stroke-width="2"/>
+    <text x="1145" y="483" text-anchor="middle" font-size="9.5" fill="#000" font-style="italic">«automated»</text>
+    <text x="1145" y="503" text-anchor="middle" font-size="13" font-weight="700" fill="#000">System</text>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!--  LEGEND                                     -->
+    <!-- ═══════════════════════════════════════════ -->
+    <rect x="162" y="760" width="580" height="40" rx="6"
+          fill="white" stroke="#000" stroke-width="1"/>
+
+    <text x="182" y="775" font-size="10" font-weight="700" fill="#000">Legend:</text>
+
+    <!-- Solid line -->
+    <line x1="238" y1="771" x2="268" y2="771" stroke="#000" stroke-width="1.5"/>
+    <text x="274" y="775" font-size="10" fill="#000">Actor association (solid)</text>
+
+    <!-- Dashed line -->
+    <line x1="420" y1="771" x2="450" y2="771" stroke="#000" stroke-width="1.5" stroke-dasharray="5,2"/>
+    <text x="456" y="775" font-size="10" fill="#000">System trigger (dashed)</text>
+
+    <!-- UC box example -->
+    <ellipse cx="230" cy="789" rx="22" ry="10" fill="white" stroke="#000" stroke-width="1.2"/>
+    <text x="258" y="793" font-size="10" fill="#000">Use Case (ellipse)</text>
+
+    <!-- Actor box example -->
+    <rect x="407" y="781" width="38" height="18" rx="3" fill="white" stroke="#000" stroke-width="1.2"/>
+    <text x="426" y="793" text-anchor="middle" font-size="8" font-style="italic" fill="#000">«auto»</text>
+    <text x="452" y="793" font-size="10" fill="#000">System Actor (box)</text>
+
+    <!-- Stick figure example -->
+    <circle cx="613" cy="770" r="7" fill="white" stroke="#000" stroke-width="1.2"/>
+    <line x1="613" y1="777" x2="613" y2="790" stroke="#000" stroke-width="1.2"/>
+    <line x1="613" y1="782" x2="604" y2="786" stroke="#000" stroke-width="1.2"/>
+    <line x1="613" y1="782" x2="622" y2="786" stroke="#000" stroke-width="1.2"/>
+    <line x1="613" y1="790" x2="607" y2="799" stroke="#000" stroke-width="1.2"/>
+    <line x1="613" y1="790" x2="619" y2="799" stroke="#000" stroke-width="1.2"/>
+    <text x="629" y="793" font-size="10" fill="#000">Human Actor</text>
+
+  </svg>
+  </div>
+  <p class="foot">BITU 3973 Final Year Project I &nbsp;|&nbsp; FTMK, UTEM</p>
+</body>
+</html>

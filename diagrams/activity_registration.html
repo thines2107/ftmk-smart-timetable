@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Activity Diagram – Registration</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #ffffff;
+      font-family: 'Inter', sans-serif;
+      color: #1a1a2e;
+      padding: 40px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: #1e3a5f;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 36px;
+    }
+    .diagram-container {
+      max-width: 760px;
+      margin: 0 auto;
+      background: #f8fafd;
+      border: 1px solid #dde4ef;
+      border-radius: 12px;
+      padding: 32px;
+    }
+    .mermaid { display: flex; justify-content: center; }
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 11px;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <h1>Activity Diagram: User Registration</h1>
+  <p class="subtitle">FTMK Smart Timetable Arrangement System</p>
+
+  <div class="diagram-container">
+    <div class="mermaid">
+flowchart TD
+    A([Start]) --> B[Visit Registration Page]
+    B --> C[Fill in Registration Form\nName, Username, Email,\nMatric No, Password,\nCourse, Year, Group]
+    C --> D{All fields\nprovided?}
+    D -- No --> E[Show: All fields are required]
+    E --> C
+    D -- Yes --> F{Password meets\ncomplexity rules?\nMin 8 chars, Upper,\nLower, Digit, Special}
+    F -- No --> G[Show: Password complexity error]
+    G --> C
+    F -- Yes --> H{Username, Email\nor Matric No\nalready exists?}
+    H -- Yes --> I[Show: Already registered error]
+    I --> C
+    H -- No --> J[Create Student Account\nin Database]
+    J --> K{Save\nSuccessful?}
+    K -- No --> L[Show: Database error]
+    L --> C
+    K -- Yes --> M[Show: Registration Successful!]
+    M --> N[Redirect to Login Page]
+    N --> O([End])
+
+    style A fill:#1e3a5f,color:#fff,stroke:none
+    style O fill:#1e3a5f,color:#fff,stroke:none
+    style E fill:#fff0f0,color:#cc0000,stroke:#ff6b6b
+    style G fill:#fff0f0,color:#cc0000,stroke:#ff6b6b
+    style I fill:#fff0f0,color:#cc0000,stroke:#ff6b6b
+    style L fill:#fff0f0,color:#cc0000,stroke:#ff6b6b
+    style M fill:#e8f5e9,color:#1b5e20,stroke:#4caf50
+    style J fill:#e3f2fd,color:#0d47a1,stroke:#2196f3
+    style N fill:#e3f2fd,color:#0d47a1,stroke:#2196f3
+    </div>
+  </div>
+
+  <p class="footer">BITU 3973 Final Year Project I &nbsp;|&nbsp; FTMK, UTEM</p>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        background: '#f8fafd',
+        primaryColor: '#dbeafe',
+        primaryTextColor: '#1e3a5f',
+        primaryBorderColor: '#93c5fd',
+        lineColor: '#374151',
+        secondaryColor: '#f0fdf4',
+        tertiaryColor: '#fff',
+        fontFamily: 'Inter, sans-serif',
+        fontSize: '14px'
+      },
+      flowchart: { curve: 'basis', padding: 20 }
+    });
+  </script>
+</body>
+</html>

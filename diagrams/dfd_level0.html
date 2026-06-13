@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Data Flow Diagram — Level 0</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:white; font-family:'Inter',sans-serif; padding:30px; }
+    h2   { text-align:center; font-size:21px; font-weight:700; color:#000; margin-bottom:4px; }
+    .sub { text-align:center; font-size:12.5px; color:#444; margin-bottom:20px; }
+    .dia { display:flex; justify-content:center; }
+    .foot{ text-align:center; margin-top:14px; font-size:11px; color:#666; }
+  </style>
+</head>
+<body>
+  <h2>Data Flow Diagram (DFD) — Level 0</h2>
+  <p class="sub">Context Diagram &nbsp;|&nbsp; FTMK Smart Timetable Arrangement System &nbsp;|&nbsp; BITU 3973 Final Year Project I</p>
+  <div class="dia">
+  <svg viewBox="0 0 1200 760" width="1200" height="760"
+       xmlns="http://www.w3.org/2000/svg"
+       style="font-family:'Inter',sans-serif;">
+
+    <defs>
+      <marker id="arr" markerWidth="11" markerHeight="8" refX="10" refY="4" orient="auto">
+        <polygon points="0 0, 11 4, 0 8" fill="#000"/>
+      </marker>
+    </defs>
+
+    <!-- Canvas background -->
+    <rect width="1200" height="760" fill="white"/>
+
+    <!-- ════════════════════════════════════════════ -->
+    <!--  SYSTEM PROCESS  (center circle)             -->
+    <!-- ════════════════════════════════════════════ -->
+    <circle cx="600" cy="360" r="132" fill="white" stroke="#000" stroke-width="2.5"/>
+    <text x="600" y="332" text-anchor="middle" font-size="15" font-weight="700">FTMK Smart Timetable</text>
+    <text x="600" y="354" text-anchor="middle" font-size="15" font-weight="700">Arrangement System</text>
+    <text x="600" y="378" text-anchor="middle" font-size="12" font-style="italic" fill="#333">Process 0.0</text>
+    <text x="600" y="400" text-anchor="middle" font-size="11" fill="#555">Timetable Generation,</text>
+    <text x="600" y="416" text-anchor="middle" font-size="11" fill="#555">PDF Extraction &amp; Social Features</text>
+
+    <!-- ════════════════════════════════════════════ -->
+    <!--  EXTERNAL ENTITIES                           -->
+    <!-- ════════════════════════════════════════════ -->
+
+    <!-- Student (top-left) — double border -->
+    <rect x="28"  y="140" width="172" height="88" fill="white" stroke="#000" stroke-width="3.5" rx="2"/>
+    <rect x="34"  y="146" width="160" height="76" fill="white" stroke="#000" stroke-width="1.2" rx="1"/>
+    <text x="114" y="178" text-anchor="middle" font-size="16" font-weight="700">Student</text>
+    <text x="114" y="198" text-anchor="middle" font-size="12" fill="#333">System User</text>
+    <text x="114" y="216" text-anchor="middle" font-size="11" font-style="italic" fill="#555">(External Entity)</text>
+
+    <!-- Admin (bottom-left) — double border -->
+    <rect x="28"  y="522" width="172" height="88" fill="white" stroke="#000" stroke-width="3.5" rx="2"/>
+    <rect x="34"  y="528" width="160" height="76" fill="white" stroke="#000" stroke-width="1.2" rx="1"/>
+    <text x="114" y="560" text-anchor="middle" font-size="16" font-weight="700">Admin</text>
+    <text x="114" y="580" text-anchor="middle" font-size="12" fill="#333">System Administrator</text>
+    <text x="114" y="598" text-anchor="middle" font-size="11" font-style="italic" fill="#555">(External Entity)</text>
+
+    <!-- FTMK Staff Directory (top-right) — double border -->
+    <rect x="1000" y="72"  width="195" height="96" fill="white" stroke="#000" stroke-width="3.5" rx="2"/>
+    <rect x="1006" y="78"  width="183" height="84" fill="white" stroke="#000" stroke-width="1.2" rx="1"/>
+    <text x="1097" y="104" text-anchor="middle" font-size="14" font-weight="700">FTMK Staff</text>
+    <text x="1097" y="122" text-anchor="middle" font-size="14" font-weight="700">Directory Website</text>
+    <text x="1097" y="143" text-anchor="middle" font-size="11" fill="#333">(External Data Source)</text>
+    <text x="1097" y="160" text-anchor="middle" font-size="10" font-style="italic" fill="#555">Scraped via Selenium + BS4</text>
+
+    <!-- Faculty Timetable PDF (bottom-right) — double border -->
+    <rect x="1000" y="488" width="195" height="96" fill="white" stroke="#000" stroke-width="3.5" rx="2"/>
+    <rect x="1006" y="494" width="183" height="84" fill="white" stroke="#000" stroke-width="1.2" rx="1"/>
+    <text x="1097" y="520" text-anchor="middle" font-size="14" font-weight="700">Faculty Timetable</text>
+    <text x="1097" y="538" text-anchor="middle" font-size="14" font-weight="700">PDF (Upload)</text>
+    <text x="1097" y="559" text-anchor="middle" font-size="11" fill="#333">(External Data Source)</text>
+    <text x="1097" y="576" text-anchor="middle" font-size="10" font-style="italic" fill="#555">Parsed via pdfplumber</text>
+
+    <!-- ════════════════════════════════════════════ -->
+    <!--  D1: SYSTEM DATABASE  (data store)           -->
+    <!-- ════════════════════════════════════════════ -->
+    <!-- Standard DFD notation: rectangle with ID section on left, open or closed -->
+    <rect x="370" y="636" width="460" height="50" fill="white" stroke="#000" stroke-width="2.2"/>
+    <line x1="422" y1="636" x2="422" y2="686" stroke="#000" stroke-width="1.8"/>
+    <text x="396" y="666" text-anchor="middle" font-size="14" font-weight="700">D1</text>
+    <text x="625" y="658" text-anchor="middle" font-size="14" font-weight="700">System Database</text>
+    <text x="625" y="675" text-anchor="middle" font-size="11" fill="#444">users &nbsp;·&nbsp; timetable &nbsp;·&nbsp; saved_timetables &nbsp;·&nbsp; saved_friends &nbsp;·&nbsp; lecturer_profiles</text>
+
+    <!-- ════════════════════════════════════════════ -->
+    <!--  DATA FLOW ARROWS                            -->
+    <!-- ════════════════════════════════════════════ -->
+
+    <!-- ── Arrow 1: Student → System (Input flows) ── -->
+    <!-- From top of Student right edge to circle upper-left perimeter -->
+    <line x1="200" y1="163" x2="480" y2="308"
+          stroke="#000" stroke-width="2" marker-end="url(#arr)"/>
+    <!-- Labels above the arrow line -->
+    <text x="296" y="205" text-anchor="middle" font-size="13" font-weight="600">Registration details,</text>
+    <text x="296" y="222" text-anchor="middle" font-size="13" font-weight="600">Login credentials,</text>
+    <text x="296" y="239" text-anchor="middle" font-size="13" font-weight="600">Subject selections &amp; Preferences</text>
+
+    <!-- ── Arrow 2: System → Student (Output flows) ── -->
+    <!-- From circle lower-left perimeter to bottom of Student right edge -->
+    <line x1="480" y1="327" x2="200" y2="208"
+          stroke="#000" stroke-width="2" marker-end="url(#arr)"/>
+    <!-- Labels below the arrow line -->
+    <text x="303" y="292" text-anchor="middle" font-size="13" font-weight="600">Conflict-free timetable options,</text>
+    <text x="303" y="309" text-anchor="middle" font-size="13" font-weight="600">Analytics &amp; Classmate data</text>
+
+    <!-- ── Arrow 3: Admin → System (Input flows) ── -->
+    <!-- From top of Admin right edge to circle lower-left perimeter -->
+    <line x1="200" y1="543" x2="480" y2="412"
+          stroke="#000" stroke-width="2" marker-end="url(#arr)"/>
+    <!-- Labels above the arrow line -->
+    <text x="302" y="456" text-anchor="middle" font-size="13" font-weight="600">Login credentials,</text>
+    <text x="302" y="473" text-anchor="middle" font-size="13" font-weight="600">PDF upload, Student &amp;</text>
+    <text x="302" y="490" text-anchor="middle" font-size="13" font-weight="600">Lecturer management data</text>
+
+    <!-- ── Arrow 4: System → Admin (Output flows) ── -->
+    <!-- From circle lower-left perimeter to bottom of Admin right edge -->
+    <line x1="480" y1="427" x2="200" y2="571"
+          stroke="#000" stroke-width="2" marker-end="url(#arr)"/>
+    <!-- Labels below the arrow line -->
+    <text x="295" y="527" text-anchor="middle" font-size="13" font-weight="600">PDF extraction status,</text>
+    <text x="295" y="544" text-anchor="middle" font-size="13" font-weight="600">Timetable records &amp; Reports</text>
+
+    <!-- ── Arrow 5: FTMK Staff Dir → System (Unidirectional, web scraping) ── -->
+    <line x1="1000" y1="122" x2="720" y2="308"
+          stroke="#000" stroke-width="2" marker-end="url(#arr)"/>
+    <!-- Label near midpoint, above the line -->
+    <text x="878" y="192" text-anchor="middle" font-size="13" font-weight="600">Lecturer profile data</text>
+    <text x="878" y="209" text-anchor="middle" font-size="13" font-weight="600">(web scraped)</text>
+
+    <!-- ── Arrow 6: Faculty PDF → System (Unidirectional, upload) ── -->
+    <line x1="1000" y1="532" x2="724" y2="410"
+          stroke="#000" stroke-width="2" marker-end="url(#arr)"/>
+    <!-- Label near midpoint, below the line -->
+    <text x="880" y="450" text-anchor="middle" font-size="13" font-weight="600">Raw timetable data</text>
+    <text x="880" y="467" text-anchor="middle" font-size="13" font-weight="600">(PDF file upload)</text>
+
+    <!-- ── Arrow 7: System → D1 Database (Store) ── -->
+    <line x1="618" y1="492" x2="638" y2="634"
+          stroke="#000" stroke-width="2" marker-end="url(#arr)"/>
+    <text x="700" y="573" font-size="13" font-weight="600">Store records</text>
+
+    <!-- ── Arrow 8: D1 Database → System (Retrieve) ── -->
+    <line x1="581" y1="634" x2="561" y2="492"
+          stroke="#000" stroke-width="2" marker-end="url(#arr)"/>
+    <text x="378" y="573" text-anchor="middle" font-size="13" font-weight="600">Retrieve records</text>
+
+    <!-- ════════════════════════════════════════════ -->
+    <!--  LEGEND                                      -->
+    <!-- ════════════════════════════════════════════ -->
+    <rect x="30" y="660" width="240" height="85" fill="white" stroke="#000" stroke-width="1.2" rx="5"/>
+    <text x="150" y="678" text-anchor="middle" font-size="12" font-weight="700">Legend</text>
+    <!-- External entity -->
+    <rect x="42" y="688" width="36" height="20" fill="white" stroke="#000" stroke-width="2.5"/>
+    <rect x="45" y="691" width="30" height="14" fill="white" stroke="#000" stroke-width="0.8"/>
+    <text x="90" y="702" font-size="11.5" fill="#000">External Entity</text>
+    <!-- Process -->
+    <circle cx="54" cy="720" r="10" fill="white" stroke="#000" stroke-width="2"/>
+    <text x="90" y="724" font-size="11.5" fill="#000">System Process</text>
+    <!-- Data store -->
+    <rect x="42" y="732" width="36" height="14" fill="white" stroke="#000" stroke-width="1.5"/>
+    <line x1="58" y1="732" x2="58" y2="746" stroke="#000" stroke-width="1.2"/>
+    <text x="90" y="743" font-size="11.5" fill="#000">Data Store</text>
+
+  </svg>
+  </div>
+  <p class="foot">BITU 3973 Final Year Project I &nbsp;|&nbsp; FTMK, UTEM</p>
+</body>
+</html>

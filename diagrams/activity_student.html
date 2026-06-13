@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Activity Diagram – Student</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #ffffff;
+      font-family: 'Inter', sans-serif;
+      color: #1a1a2e;
+      padding: 40px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: #1e3a5f;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 36px;
+    }
+    .diagram-container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #f8fafd;
+      border: 1px solid #dde4ef;
+      border-radius: 12px;
+      padding: 32px;
+    }
+    .mermaid { display: flex; justify-content: center; }
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 11px;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <h1>Activity Diagram: Student Portal</h1>
+  <p class="subtitle">FTMK Smart Timetable Arrangement System</p>
+
+  <div class="diagram-container">
+    <div class="mermaid">
+flowchart TD
+    A([Start]) --> B[Login as Student]
+    B --> C[Student Dashboard]
+
+    C --> D{Choose Feature}
+
+    %% === GENERATE TIMETABLE ===
+    D -->|Generate Timetable| E[Select Course & Subjects]
+    E --> F[Run Genetic Algorithm\nto Find Non-Clashing Schedules]
+    F --> G[View Generated Timetable Combinations]
+    G --> H{Satisfied with\nResult?}
+    H -- No --> E
+    H -- Yes --> I[Save Timetable to Profile]
+    I --> J{Set as\nPrimary Timetable?}
+    J -- Yes --> K[Mark as Primary]
+    J -- No --> L[Keep as Saved]
+    K --> C
+    L --> C
+
+    %% === SOCIAL ===
+    D -->|Social| M[View Friends List]
+    M --> N{Action?}
+    N -->|Add Friend| O[Enter Friend Matric No]
+    O --> P{Friend Found?}
+    P -- No --> Q[Show: Student Not Found]
+    Q --> M
+    P -- Yes --> R[Add to Friends List]
+    R --> M
+    N -->|Compare Timetable| S[View Overlapping Free Slots]
+    S --> C
+    N -->|Remove Friend| T[Remove from Friends List]
+    T --> M
+
+    %% === CLASSMATES ===
+    D -->|Classmates| U[View Classmates\nby Subject & Group]
+    U --> C
+
+    %% === LECTURERS ===
+    D -->|Lecturers| V[Search Lecturer Directory]
+    V --> W[View Lecturer Profile\nSubjects, Schedule,\nEmail, Office]
+    W --> C
+
+    %% === ANALYTICS ===
+    D -->|Analytics| X{Primary Timetable\nSet?}
+    X -- No --> Y[Prompt to Set Primary Timetable]
+    Y --> C
+    X -- Yes --> Z[View Analytics Dashboard\nTotal Hours, Busiest Day,\nLecture vs Lab Ratio]
+    Z --> C
+
+    %% === LOGOUT ===
+    D -->|Logout| END([End])
+
+    style A fill:#1e3a5f,color:#fff,stroke:none
+    style END fill:#1e3a5f,color:#fff,stroke:none
+    style F fill:#ede9fe,color:#3b0764,stroke:#a78bfa
+    style Q fill:#fff0f0,color:#cc0000,stroke:#ff6b6b
+    style Y fill:#fff8e1,color:#7c4f00,stroke:#ffc107
+    style K fill:#e8f5e9,color:#1b5e20,stroke:#4caf50
+    style Z fill:#e3f2fd,color:#0d47a1,stroke:#2196f3
+    </div>
+  </div>
+
+  <p class="footer">BITU 3973 Final Year Project I &nbsp;|&nbsp; FTMK, UTEM</p>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        background: '#f8fafd',
+        primaryColor: '#dbeafe',
+        primaryTextColor: '#1e3a5f',
+        primaryBorderColor: '#93c5fd',
+        lineColor: '#374151',
+        secondaryColor: '#f0fdf4',
+        tertiaryColor: '#fff',
+        fontFamily: 'Inter, sans-serif',
+        fontSize: '14px'
+      },
+      flowchart: { curve: 'basis', padding: 20 }
+    });
+  </script>
+</body>
+</html>

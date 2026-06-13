@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Database Normalization</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Mono:wght@400;500&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #fff; font-family: 'Inter', sans-serif; color: #000; font-size: 12.5px; line-height: 1.6; padding: 44px 52px; }
+
+    h1  { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .sub { font-size: 12px; color: #555; margin-bottom: 36px; }
+
+    /* ── Step block ─────────────────── */
+    .step {
+      margin-bottom: 42px;
+      page-break-inside: avoid;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-bottom: 2px solid #000;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+    }
+    .step-badge {
+      background: #000;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 14px;
+      border-radius: 5px;
+      white-space: nowrap;
+    }
+    .step-title { font-size: 17px; font-weight: 700; }
+    .step-rule {
+      border: 1.5px solid #000;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-size: 12px;
+      margin-bottom: 14px;
+      background: #f9f9f9;
+    }
+    .step-rule strong { display: block; margin-bottom: 3px; }
+
+    /* ── Table ──────────────────────── */
+    .tbl-wrap { overflow-x: auto; margin-bottom: 14px; }
+    .tbl-label {
+      font-family: 'Fira Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      background: #000;
+      color: #fff;
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 4px 4px 0 0;
+      margin-top: 12px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.5px;
+      border: 1.5px solid #000;
+    }
+    thead tr { background: #fff; color: #000; }
+    thead th { padding: 8px 11px; text-align: left; font-weight: 700; font-size: 11px; white-space: nowrap; border: 1.5px solid #000; }
+    tbody tr { background: #fff; }
+    tbody tr:nth-child(even) { background: #fff; }
+    tbody td { padding: 7px 11px; border: 1px solid #000; vertical-align: top; }
+    tbody tr:last-child td { border: 1px solid #000; }
+
+    .mono  { font-family: 'Fira Mono', monospace; font-size: 10.5px; }
+    .pk    { font-weight: 700; text-decoration: underline; font-family: 'Fira Mono', monospace; font-size: 10.5px; }
+    .fk    { font-style: italic; font-family: 'Fira Mono', monospace; font-size: 10.5px; }
+    .bad   { }
+
+    .note  { font-size: 11px; color: #444; margin-top: 6px; font-style: italic; }
+    .arrow { text-align: center; font-size: 22px; margin: 8px 0; color: #000; }
+
+    /* ── Summary table ──────────────── */
+    .summary thead tr { background: #000; }
+    .tick { text-align: center; font-size: 14px; }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>Database Normalization</h1>
+<p class="sub">Section 4.2.3.1 — FTMK Smart Timetable Arrangement System &nbsp;|&nbsp; BITU 3973 Final Year Project I</p>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- UNF                                        -->
+<!-- ══════════════════════════════════════════ -->
+<div class="step">
+  <div class="step-header">
+    <span class="step-badge">UNF</span>
+    <div>
+      <div class="step-title">Unnormalized Form (UNF)</div>
+    </div>
+  </div>
+  <div class="step-rule">
+    <strong>Problem:</strong>
+    All data is stored in a single flat table. Repeating groups exist — one student can have multiple subjects listed in a single row, and lecturer details are duplicated for every timetable record.
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>student_name</th>
+          <th>matric_no</th>
+          <th>course</th>
+          <th>year</th>
+          <th>group</th>
+          <th>subjects (repeating)</th>
+          <th>subject_names (repeating)</th>
+          <th>days (repeating)</th>
+          <th>times (repeating)</th>
+          <th>rooms (repeating)</th>
+          <th>lecturers (repeating)</th>
+          <th>lec_emails (repeating)</th>
+          <th>lec_offices (repeating)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ahmad Syahmi</td>
+          <td class="mono">B032210001</td>
+          <td class="mono">BITA</td>
+          <td>Year 3</td>
+          <td class="mono">S1G1</td>
+          <td class="bad">BITP1123, BITU3973</td>
+          <td class="bad">Programming Technique, Final Year Project</td>
+          <td class="bad">MONDAY, TUESDAY</td>
+          <td class="bad">08:00-10:00, 09:00-11:00</td>
+          <td class="bad">BK11, BK12</td>
+          <td class="bad">DR. FADZIL, DR. SITI</td>
+          <td class="bad">fadzil@utem, siti@utem</td>
+          <td class="bad">B1-17, B2-09</td>
+        </tr>
+        <tr>
+          <td>Nurul Ain</td>
+          <td class="mono">B032210045</td>
+          <td class="mono">BITC</td>
+          <td>Year 3</td>
+          <td class="mono">S2G3</td>
+          <td class="bad">BITP1123, BITM3143</td>
+          <td class="bad">Programming Technique, Data Mining</td>
+          <td class="bad">MONDAY, WEDNESDAY</td>
+          <td class="bad">08:00-10:00, 10:00-12:00</td>
+          <td class="bad">BK11, BR04</td>
+          <td class="bad">DR. FADZIL, DR. AZRI</td>
+          <td class="bad">fadzil@utem, azri@utem</td>
+          <td class="bad">B1-17, A3-12</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">&#9888; Problems: Repeating groups in single cells, data redundancy (DR. FADZIL's email stored multiple times), no atomic values.</p>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 1NF                                        -->
+<!-- ══════════════════════════════════════════ -->
+<div class="step">
+  <div class="step-header">
+    <span class="step-badge">1NF</span>
+    <div>
+      <div class="step-title">First Normal Form (1NF)</div>
+    </div>
+  </div>
+  <div class="step-rule">
+    <strong>Rule Applied:</strong>
+    Each column must contain only one atomic value per row. Repeating groups are eliminated by expanding each subject into its own row. All cells now hold a single value.
+  </div>
+
+  <div class="tbl-wrap">
+    <div class="tbl-label">1NF — Flat Atomic Table</div>
+    <table>
+      <thead>
+        <tr>
+          <th>student_name</th>
+          <th>matric_no</th>
+          <th>course</th>
+          <th>year</th>
+          <th>group_name</th>
+          <th>subject_code</th>
+          <th>subject_name</th>
+          <th>class_type</th>
+          <th>day</th>
+          <th>start_time</th>
+          <th>end_time</th>
+          <th>room</th>
+          <th>lecturer_name</th>
+          <th>lec_email</th>
+          <th>lec_dept</th>
+          <th>lec_office</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ahmad Syahmi</td><td class="mono">B032210001</td><td class="mono">BITA</td><td>Year 3</td><td class="mono">S1G1</td>
+          <td class="mono">BITP1123</td><td>Programming Technique</td><td>LEC</td><td>MONDAY</td>
+          <td class="mono">08:00</td><td class="mono">10:00</td><td>BK11</td><td>DR. FADZIL</td><td>fadzil@utem</td><td>Dept of SE</td><td>B1-17</td>
+        </tr>
+        <tr>
+          <td>Ahmad Syahmi</td><td class="mono">B032210001</td><td class="mono">BITA</td><td>Year 3</td><td class="mono">S1G1</td>
+          <td class="mono">BITP1123</td><td>Programming Technique</td><td>LAB</td><td>WEDNESDAY</td>
+          <td class="mono">14:00</td><td class="mono">16:00</td><td>Lab3</td><td>DR. FADZIL</td><td>fadzil@utem</td><td>Dept of SE</td><td>B1-17</td>
+        </tr>
+        <tr>
+          <td>Ahmad Syahmi</td><td class="mono">B032210001</td><td class="mono">BITA</td><td>Year 3</td><td class="mono">S1G1</td>
+          <td class="mono">BITU3973</td><td>Final Year Project</td><td>LEC</td><td>TUESDAY</td>
+          <td class="mono">09:00</td><td class="mono">11:00</td><td>BK12</td><td>DR. SITI</td><td>siti@utem</td><td>Dept of IT</td><td>B2-09</td>
+        </tr>
+        <tr>
+          <td>Nurul Ain</td><td class="mono">B032210045</td><td class="mono">BITC</td><td>Year 3</td><td class="mono">S2G3</td>
+          <td class="mono">BITP1123</td><td>Programming Technique</td><td>LEC</td><td>MONDAY</td>
+          <td class="mono">08:00</td><td class="mono">10:00</td><td>BK11</td><td>DR. FADZIL</td><td>fadzil@utem</td><td>Dept of SE</td><td>B1-17</td>
+        </tr>
+        <tr>
+          <td>Nurul Ain</td><td class="mono">B032210045</td><td class="mono">BITC</td><td>Year 3</td><td class="mono">S2G3</td>
+          <td class="mono">BITM3143</td><td>Data Mining</td><td>LEC</td><td>WEDNESDAY</td>
+          <td class="mono">10:00</td><td class="mono">12:00</td><td>BR04</td><td>DR. AZRI</td><td>azri@utem</td><td>Dept of IT</td><td>A3-12</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">&#10003; Each cell is now atomic. But student info (name, course, year) is still duplicated for every subject row. Lecturer info is still duplicated across multiple rows.</p>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 2NF                                        -->
+<!-- ══════════════════════════════════════════ -->
+<div class="step">
+  <div class="step-header">
+    <span class="step-badge">2NF</span>
+    <div>
+      <div class="step-title">Second Normal Form (2NF)</div>
+    </div>
+  </div>
+  <div class="step-rule">
+    <strong>Rule Applied:</strong>
+    Remove partial dependencies. The composite key for the 1NF table is <u>(matric_no, subject_code, day, start_time)</u>. Attributes that depend only on <em>part</em> of this key are moved to separate tables.
+    <br><br>
+    <strong>Partial dependencies identified:</strong><br>
+    &bull; student_name, course, year, group_name &rarr; depend only on <u>matric_no</u> &rarr; moved to <strong>users</strong> table<br>
+    &bull; subject_name &rarr; depends only on <u>subject_code</u> &rarr; captured in <strong>timetable</strong> table<br>
+    &bull; lec_email, lec_dept, lec_office &rarr; depend only on <u>lecturer_name</u> &rarr; moved to <strong>lecturer_profiles</strong> table
+  </div>
+
+  <div class="tbl-wrap">
+    <div class="tbl-label">users</div>
+    <table>
+      <thead>
+        <tr><th>id (PK)</th><th>name</th><th>matric_no (UK)</th><th>email (UK)</th><th>course</th><th>year</th><th>group_name</th><th>role</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="pk">1</td><td>Ahmad Syahmi</td><td class="mono">B032210001</td><td>syahmi@utem</td><td class="mono">BITA</td><td>Year 3</td><td class="mono">S1G1</td><td>student</td></tr>
+        <tr><td class="pk">2</td><td>Nurul Ain</td><td class="mono">B032210045</td><td>ain@utem</td><td class="mono">BITC</td><td>Year 3</td><td class="mono">S2G3</td><td>student</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tbl-wrap">
+    <div class="tbl-label">timetable</div>
+    <table>
+      <thead>
+        <tr><th>id (PK)</th><th>course_code</th><th>semester</th><th>group_name</th><th>subject_code</th><th>subject_name</th><th>class_type</th><th>day</th><th>start_time</th><th>end_time</th><th>room</th><th>lecturer_name</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="pk">1</td><td class="mono">BITA</td><td>Sem 2 2025</td><td class="mono">S1G1</td><td class="mono">BITP1123</td><td>Programming Technique</td><td>LEC</td><td>MONDAY</td><td class="mono">08:00</td><td class="mono">10:00</td><td>BK11</td><td>DR. FADZIL</td></tr>
+        <tr><td class="pk">2</td><td class="mono">BITA</td><td>Sem 2 2025</td><td class="mono">S1G1</td><td class="mono">BITP1123</td><td>Programming Technique</td><td>LAB</td><td>WEDNESDAY</td><td class="mono">14:00</td><td class="mono">16:00</td><td>Lab3</td><td>DR. FADZIL</td></tr>
+        <tr><td class="pk">3</td><td class="mono">BITA</td><td>Sem 2 2025</td><td class="mono">S1G1</td><td class="mono">BITU3973</td><td>Final Year Project</td><td>LEC</td><td>TUESDAY</td><td class="mono">09:00</td><td class="mono">11:00</td><td>BK12</td><td>DR. SITI</td></tr>
+        <tr><td class="pk">4</td><td class="mono">BITC</td><td>Sem 2 2025</td><td class="mono">S2G3</td><td class="mono">BITP1123</td><td>Programming Technique</td><td>LEC</td><td>MONDAY</td><td class="mono">08:00</td><td class="mono">10:00</td><td>BK11</td><td>DR. FADZIL</td></tr>
+        <tr><td class="pk">5</td><td class="mono">BITC</td><td>Sem 2 2025</td><td class="mono">S2G3</td><td class="mono">BITM3143</td><td>Data Mining</td><td>LEC</td><td>WEDNESDAY</td><td class="mono">10:00</td><td class="mono">12:00</td><td>BR04</td><td>DR. AZRI</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="note">&#10003; Student data is no longer repeated for every subject row. Lecturer contact details will be handled in 3NF. But <em>lecturer_name</em> in timetable still transitively carries lec_email, lec_dept — resolved in 3NF.</p>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- 3NF                                        -->
+<!-- ══════════════════════════════════════════ -->
+<div class="step">
+  <div class="step-header">
+    <span class="step-badge">3NF</span>
+    <div>
+      <div class="step-title">Third Normal Form (3NF)</div>
+    </div>
+  </div>
+  <div class="step-rule">
+    <strong>Rule Applied:</strong>
+    Remove transitive dependencies. No non-key attribute should depend on another non-key attribute.
+    <br><br>
+    <strong>Transitive dependency identified:</strong><br>
+    &bull; In <code>timetable</code>: <u>id &rarr; lecturer_name &rarr; lec_email, lec_dept, lec_office</u><br>
+    &nbsp;&nbsp; The contact details depend on <em>lecturer_name</em>, not the primary key. &rarr; moved to a separate <strong>lecturer_profiles</strong> table.<br>
+    &bull; Additionally, <strong>saved_timetables</strong> and <strong>saved_friends</strong> are introduced as separate entities with proper FK references.
+  </div>
+
+  <div class="tbl-wrap">
+    <div class="tbl-label">users (final)</div>
+    <table>
+      <thead>
+        <tr><th>id (PK)</th><th>name</th><th>email (UK)</th><th>username (UK)</th><th>password_hash</th><th>matric_no (UK)</th><th>course</th><th>year</th><th>group_name</th><th>role</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="pk">1</td><td>Ahmad Syahmi</td><td>syahmi@utem</td><td class="mono">syahmi2024</td><td class="mono">scrypt:...</td><td class="mono">B032210001</td><td class="mono">BITA</td><td>Year 3</td><td class="mono">S1G1</td><td>student</td></tr>
+        <tr><td class="pk">2</td><td>Nurul Ain</td><td>ain@utem</td><td class="mono">nurulainn</td><td class="mono">scrypt:...</td><td class="mono">B032210045</td><td class="mono">BITC</td><td>Year 3</td><td class="mono">S2G3</td><td>student</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tbl-wrap">
+    <div class="tbl-label">timetable (final — transitive dependency removed)</div>
+    <table>
+      <thead>
+        <tr><th>id (PK)</th><th>course_code</th><th>semester</th><th>group_name</th><th>subject_code</th><th>subject_name</th><th>class_type</th><th>day</th><th>start_time</th><th>end_time</th><th>room</th><th>lecturer_name</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="pk">1</td><td class="mono">BITA</td><td>Sem 2 2025</td><td class="mono">S1G1</td><td class="mono">BITP1123</td><td>Programming Technique</td><td>LEC</td><td>MONDAY</td><td class="mono">08:00</td><td class="mono">10:00</td><td>BK11</td><td class="fk">DR. FADZIL</td></tr>
+        <tr><td class="pk">2</td><td class="mono">BITA</td><td>Sem 2 2025</td><td class="mono">S1G1</td><td class="mono">BITP1123</td><td>Programming Technique</td><td>LAB</td><td>WEDNESDAY</td><td class="mono">14:00</td><td class="mono">16:00</td><td>Lab3</td><td class="fk">DR. FADZIL</td></tr>
+        <tr><td class="pk">3</td><td class="mono">BITA</td><td>Sem 2 2025</td><td class="mono">S1G1</td><td class="mono">BITU3973</td><td>Final Year Project</td><td>LEC</td><td>TUESDAY</td><td class="mono">09:00</td><td class="mono">11:00</td><td>BK12</td><td class="fk">DR. SITI</td></tr>
+        <tr><td class="pk">4</td><td class="mono">BITC</td><td>Sem 2 2025</td><td class="mono">S2G3</td><td class="mono">BITP1123</td><td>Programming Technique</td><td>LEC</td><td>MONDAY</td><td class="mono">08:00</td><td class="mono">10:00</td><td>BK11</td><td class="fk">DR. FADZIL</td></tr>
+        <tr><td class="pk">5</td><td class="mono">BITC</td><td>Sem 2 2025</td><td class="mono">S2G3</td><td class="mono">BITM3143</td><td>Data Mining</td><td>LEC</td><td>WEDNESDAY</td><td class="mono">10:00</td><td class="mono">12:00</td><td>BR04</td><td class="fk">DR. AZRI</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tbl-wrap">
+    <div class="tbl-label">lecturer_profiles (new — transitive data separated)</div>
+    <table>
+      <thead>
+        <tr><th>id (PK)</th><th>name (UK)</th><th>title</th><th>email</th><th>department</th><th>block</th><th>office_room</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="pk">1</td><td>DR. FADZIL</td><td>Dr.</td><td>fadzil@utem.edu.my</td><td>Dept of Software Engineering</td><td>Block B</td><td>B1-17</td></tr>
+        <tr><td class="pk">2</td><td>DR. SITI</td><td>Dr.</td><td>siti@utem.edu.my</td><td>Dept of IT</td><td>Block B</td><td>B2-09</td></tr>
+        <tr><td class="pk">3</td><td>DR. AZRI</td><td>Dr.</td><td>azri@utem.edu.my</td><td>Dept of IT</td><td>Block A</td><td>A3-12</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tbl-wrap">
+    <div class="tbl-label">saved_timetables</div>
+    <table>
+      <thead>
+        <tr><th>id (PK)</th><th>user_id (FK)</th><th>name</th><th>data (JSON snapshot)</th><th>is_primary</th><th>created_at</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="pk">1</td><td class="fk">1</td><td>My Sem 2 Plan</td><td class="mono">[{"subject":"BITP1123",...}]</td><td>True</td><td>2025-06-10 14:30</td></tr>
+        <tr><td class="pk">2</td><td class="fk">2</td><td>Option A</td><td class="mono">[{"subject":"BITM3143",...}]</td><td>True</td><td>2025-06-10 15:00</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tbl-wrap">
+    <div class="tbl-label">saved_friends</div>
+    <table>
+      <thead>
+        <tr><th>id (PK)</th><th>user_id (FK)</th><th>friend_matric</th><th>friend_name</th><th>created_at</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="pk">1</td><td class="fk">1</td><td class="mono">B032210045</td><td>Nurul Ain binti Razak</td><td>2025-06-10 09:15</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">&#10003; All transitive dependencies removed. Each non-key attribute depends only on the primary key of its table. Database is fully in 3NF.</p>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SUMMARY TABLE                              -->
+<!-- ══════════════════════════════════════════ -->
+<div class="step">
+  <div class="step-header">
+    <span class="step-badge">SUMMARY</span>
+    <div class="step-title">Normalization Summary</div>
+  </div>
+  <table class="summary">
+    <thead>
+      <tr>
+        <th>Table</th>
+        <th>UNF Issue</th>
+        <th>1NF</th>
+        <th>2NF</th>
+        <th>3NF</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="mono">users</td>
+        <td>Student data repeated in every subject row</td>
+        <td class="tick">&#10003;</td>
+        <td class="tick">&#10003; Separated from subject rows</td>
+        <td class="tick">&#10003; No transitive deps</td>
+      </tr>
+      <tr>
+        <td class="mono">timetable</td>
+        <td>Multi-value cells for subjects, days, times</td>
+        <td class="tick">&#10003; One row per session</td>
+        <td class="tick">&#10003; Subject info kept; student info separated</td>
+        <td class="tick">&#10003; Lecturer details moved out</td>
+      </tr>
+      <tr>
+        <td class="mono">lecturer_profiles</td>
+        <td>Lecturer email/office repeated for every class row</td>
+        <td class="tick">&#10003;</td>
+        <td class="tick">&#10003;</td>
+        <td class="tick">&#10003; Created in 3NF step</td>
+      </tr>
+      <tr>
+        <td class="mono">saved_timetables</td>
+        <td>N/A — new entity</td>
+        <td class="tick">&#10003;</td>
+        <td class="tick">&#10003;</td>
+        <td class="tick">&#10003; FK to users only</td>
+      </tr>
+      <tr>
+        <td class="mono">saved_friends</td>
+        <td>N/A — new entity</td>
+        <td class="tick">&#10003;</td>
+        <td class="tick">&#10003;</td>
+        <td class="tick">&#10003; FK to users only</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:11px;color:#555;margin-top:10px;">
+    <strong>PK</strong> = Primary Key (underlined) &nbsp;&nbsp; <strong>FK</strong> = Foreign Key (italicised) &nbsp;&nbsp; <strong>UK</strong> = Unique Key
+  </p>
+</div>
+
+</body>
+</html>

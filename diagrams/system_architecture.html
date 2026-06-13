@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>System Architecture Diagram</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Mono:wght@400;500&display=swap');
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:white; font-family:'Inter',sans-serif; padding:30px; }
+    h2   { text-align:center; font-size:20px; font-weight:700; color:#000; margin-bottom:4px; }
+    .sub { text-align:center; font-size:12px; color:#444; margin-bottom:20px; }
+    .dia { display:flex; justify-content:center; }
+    .foot{ text-align:center; margin-top:14px; font-size:11px; color:#666; }
+  </style>
+</head>
+<body>
+  <h2>System Architecture Diagram</h2>
+  <p class="sub">4.2.1 System Architecture &nbsp;|&nbsp; Three-Tier Architecture &nbsp;|&nbsp; FTMK Smart Timetable Arrangement System</p>
+  <div class="dia">
+
+  <svg viewBox="0 0 890 678" width="1020" height="710"
+       xmlns="http://www.w3.org/2000/svg"
+       style="font-family:'Inter',sans-serif;">
+
+    <defs>
+      <marker id="arr-d" markerWidth="10" markerHeight="8" refX="5" refY="4" orient="auto">
+        <polygon points="0 0, 10 4, 0 8" fill="#000"/>
+      </marker>
+      <marker id="arr-u" markerWidth="10" markerHeight="8" refX="5" refY="4" orient="auto-start-reverse">
+        <polygon points="0 0, 10 4, 0 8" fill="#000"/>
+      </marker>
+    </defs>
+
+    <!-- Background -->
+    <rect width="1020" height="710" fill="white"/>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- OUTER SYSTEM BOUNDARY                       -->
+    <!-- ═══════════════════════════════════════════ -->
+    <rect x="25" y="18" width="970" height="672" rx="10"
+          fill="white" stroke="#000" stroke-width="2"/>
+    <!-- System label at top -->
+    <rect x="25" y="18" width="970" height="38" rx="10" fill="#000"/>
+    <rect x="25" y="40" width="970" height="16" fill="#000"/>
+    <text x="510" y="43" text-anchor="middle" font-size="13.5" font-weight="700" fill="white">
+      FTMK Smart Timetable Arrangement System — Three-Tier Architecture
+    </text>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- LAYER 1 — PRESENTATION LAYER               -->
+    <!-- ═══════════════════════════════════════════ -->
+    <rect x="45" y="70" width="930" height="175" rx="6"
+          fill="white" stroke="#000" stroke-width="1.8"/>
+
+    <!-- Layer label band (left strip) -->
+    <rect x="45" y="70" width="115" height="175" rx="6" fill="#f0f0f0" stroke="#000" stroke-width="1.8"/>
+    <text transform="translate(105,158) rotate(-90)" text-anchor="middle"
+          font-size="12" font-weight="700" fill="#000">PRESENTATION LAYER</text>
+
+    <!-- Layer 1 — top label -->
+    <text x="175" y="92" font-size="11" font-weight="700" fill="#000">Layer 1</text>
+
+    <!-- Component boxes -->
+    <!-- Student Portal -->
+    <rect x="172" y="100" width="155" height="60" rx="5" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="249" y="121" text-anchor="middle" font-size="11" font-weight="700" fill="#000">Student Portal</text>
+    <text x="249" y="138" text-anchor="middle" font-size="10" fill="#333">Login, Dashboard,</text>
+    <text x="249" y="152" text-anchor="middle" font-size="10" fill="#333">Timetable, Social</text>
+
+    <!-- Jinja2 / HTML/CSS/JS box -->
+    <rect x="345" y="100" width="185" height="60" rx="5" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="437" y="121" text-anchor="middle" font-size="11" font-weight="700" fill="#000">Web Browser UI</text>
+    <text x="437" y="138" text-anchor="middle" font-size="10" fill="#333">HTML · CSS · JavaScript</text>
+    <text x="437" y="152" text-anchor="middle" font-size="10" fill="#333">Jinja2 Template Engine</text>
+
+    <!-- Vanilla JS box -->
+    <rect x="548" y="100" width="165" height="60" rx="5" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="630" y="121" text-anchor="middle" font-size="11" font-weight="700" fill="#000">Client-Side Logic</text>
+    <text x="630" y="138" text-anchor="middle" font-size="10" fill="#333">Vanilla JavaScript</text>
+    <text x="630" y="152" text-anchor="middle" font-size="10" fill="#333">AJAX API Calls</text>
+
+    <!-- Admin Portal -->
+    <rect x="731" y="100" width="155" height="60" rx="5" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="808" y="121" text-anchor="middle" font-size="11" font-weight="700" fill="#000">Admin Portal</text>
+    <text x="808" y="138" text-anchor="middle" font-size="10" fill="#333">Dashboard, Upload,</text>
+    <text x="808" y="152" text-anchor="middle" font-size="10" fill="#333">Manage Records</text>
+
+    <!-- Technology label -->
+    <text x="175" y="202" font-size="11" fill="#000">
+      <tspan font-weight="700">Technology: </tspan>
+      <tspan font-style="italic">Jinja2 Templates, Vanilla JS</tspan>
+    </text>
+    <text x="175" y="220" font-size="11" fill="#000">
+      <tspan font-weight="700">Component: </tspan>
+      <tspan font-style="italic">Web Browser UI (HTML, CSS, JavaScript)</tspan>
+    </text>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- BIDIRECTIONAL ARROW 1 (HTTP)               -->
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- Down arrow -->
+    <line x1="510" y1="248" x2="510" y2="270"
+          stroke="#000" stroke-width="2" marker-end="url(#arr-d)"/>
+    <!-- Up arrow -->
+    <line x1="490" y1="270" x2="490" y2="248"
+          stroke="#000" stroke-width="2" marker-end="url(#arr-u)"/>
+    <!-- Label -->
+    <text x="530" y="263" font-size="11" fill="#000" font-style="italic">HTTP Request / Response</text>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- LAYER 2 — APPLICATION LOGIC LAYER          -->
+    <!-- ═══════════════════════════════════════════ -->
+    <rect x="45" y="278" width="930" height="225" rx="6"
+          fill="white" stroke="#000" stroke-width="1.8"/>
+
+    <!-- Layer label band -->
+    <rect x="45" y="278" width="115" height="225" rx="6" fill="#f0f0f0" stroke="#000" stroke-width="1.8"/>
+    <text transform="translate(105,395) rotate(-90)" text-anchor="middle"
+          font-size="10.5" font-weight="700" fill="#000">APPLICATION LOGIC LAYER</text>
+
+    <!-- Layer 2 — top label -->
+    <text x="175" y="300" font-size="11" font-weight="700" fill="#000">Layer 2</text>
+
+    <!-- Flask App Server box -->
+    <rect x="172" y="308" width="160" height="70" rx="5" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="252" y="330" text-anchor="middle" font-size="11" font-weight="700" fill="#000">Flask App Server</text>
+    <text x="252" y="347" text-anchor="middle" font-size="10" fill="#333">app.py</text>
+    <text x="252" y="362" text-anchor="middle" font-size="10" fill="#333">Session Management</text>
+    <text x="252" y="377" text-anchor="middle" font-size="10" fill="#333">Auth &amp; Role Control</text>
+
+    <!-- Routes & Business Logic box -->
+    <rect x="348" y="308" width="160" height="70" rx="5" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="428" y="330" text-anchor="middle" font-size="11" font-weight="700" fill="#000">Routes &amp; Logic</text>
+    <text x="428" y="347" text-anchor="middle" font-size="10" fill="#333">routes.py</text>
+    <text x="428" y="362" text-anchor="middle" font-size="10" fill="#333">HTTP Handlers</text>
+    <text x="428" y="377" text-anchor="middle" font-size="10" fill="#333">REST API Endpoints</text>
+
+    <!-- Scheduling Algorithm box -->
+    <rect x="524" y="308" width="160" height="70" rx="5" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="604" y="326" text-anchor="middle" font-size="11" font-weight="700" fill="#000">Scheduling</text>
+    <text x="604" y="342" text-anchor="middle" font-size="11" font-weight="700" fill="#000">Algorithm</text>
+    <text x="604" y="359" text-anchor="middle" font-size="10" fill="#333">generator.py</text>
+    <text x="604" y="374" text-anchor="middle" font-size="10" fill="#333">Conflict Detection</text>
+
+    <!-- PDF Extractor & Scraper box -->
+    <rect x="700" y="308" width="185" height="70" rx="5" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="792" y="326" text-anchor="middle" font-size="11" font-weight="700" fill="#000">Data Acquisition</text>
+    <text x="792" y="342" text-anchor="middle" font-size="11" font-weight="700" fill="#000">Modules</text>
+    <text x="792" y="359" text-anchor="middle" font-size="10" fill="#333">pdf_extractor.py (pdfplumber)</text>
+    <text x="792" y="374" text-anchor="middle" font-size="10" fill="#333">scraper.py (Selenium)</text>
+
+    <!-- SQLAlchemy ORM box -->
+    <rect x="172" y="395" width="713" height="50" rx="5" fill="#f7f7f7" stroke="#000" stroke-width="1.2"/>
+    <text x="528" y="415" text-anchor="middle" font-size="11" font-weight="700" fill="#000">SQLAlchemy ORM</text>
+    <text x="528" y="432" text-anchor="middle" font-size="10" fill="#333">
+      models.py — User · Timetable · SavedTimetable · SavedFriend · LecturerProfile
+    </text>
+
+    <!-- Technology label -->
+    <text x="175" y="464" font-size="11" fill="#000">
+      <tspan font-weight="700">Technology: </tspan>
+      <tspan font-style="italic">Python, Flask Framework</tspan>
+    </text>
+    <text x="175" y="481" font-size="11" fill="#000">
+      <tspan font-weight="700">Component: </tspan>
+      <tspan font-style="italic">Backend Server, Routes, Business Logic</tspan>
+    </text>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- BIDIRECTIONAL ARROW 2 (SQL)                -->
+    <!-- ═══════════════════════════════════════════ -->
+    <line x1="510" y1="508" x2="510" y2="530"
+          stroke="#000" stroke-width="2" marker-end="url(#arr-d)"/>
+    <line x1="490" y1="530" x2="490" y2="508"
+          stroke="#000" stroke-width="2" marker-end="url(#arr-u)"/>
+    <text x="530" y="524" font-size="11" fill="#000" font-style="italic">SQL Query / Result (via ORM)</text>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- LAYER 3 — DATA LAYER                       -->
+    <!-- ═══════════════════════════════════════════ -->
+    <rect x="45" y="538" width="930" height="140" rx="6"
+          fill="white" stroke="#000" stroke-width="1.8"/>
+
+    <!-- Layer label band -->
+    <rect x="45" y="538" width="115" height="140" rx="6" fill="#f0f0f0" stroke="#000" stroke-width="1.8"/>
+    <text transform="translate(105,608) rotate(-90)" text-anchor="middle"
+          font-size="12" font-weight="700" fill="#000">DATA LAYER</text>
+
+    <!-- Layer 3 — top label -->
+    <text x="175" y="560" font-size="11" font-weight="700" fill="#000">Layer 3</text>
+
+    <!-- SQLite box -->
+    <rect x="172" y="568" width="300" height="65" rx="5" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="322" y="590" text-anchor="middle" font-size="11" font-weight="700" fill="#000">SQLite Database</text>
+    <text x="322" y="608" text-anchor="middle" font-size="10" fill="#333">Development Environment</text>
+    <text x="322" y="624" text-anchor="middle" font-size="10" fill="#333">Lightweight embedded RDBMS</text>
+
+    <!-- PostgreSQL box -->
+    <rect x="490" y="568" width="395" height="65" rx="5" fill="white" stroke="#000" stroke-width="1.5"/>
+    <text x="687" y="590" text-anchor="middle" font-size="11" font-weight="700" fill="#000">PostgreSQL Database</text>
+    <text x="687" y="608" text-anchor="middle" font-size="10" fill="#333">Production Environment</text>
+    <text x="687" y="624" text-anchor="middle" font-size="10" fill="#333">Robust RDBMS for concurrent access &amp; scalability</text>
+
+    <!-- Technology label -->
+    <text x="175" y="656" font-size="11" fill="#000">
+      <tspan font-weight="700">Technology: </tspan>
+      <tspan font-style="italic">SQLite (development), PostgreSQL (production)</tspan>
+    </text>
+    <text x="175" y="672" font-size="11" fill="#000">
+      <tspan font-weight="700">Component: </tspan>
+      <tspan font-style="italic">Relational Database</tspan>
+    </text>
+
+  </svg>
+  </div>
+  <p class="foot">BITU 3973 Final Year Project I &nbsp;|&nbsp; FTMK, UTEM</p>
+</body>
+</html>

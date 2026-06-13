@@ -1,0 +1,14 @@
+Flask==3.0.0
+Flask-SQLAlchemy==3.1.1
+psycopg2-binary==2.9.9
+pdfplumber==0.10.3
+pandas==2.1.2
+Werkzeug==3.0.1
+sqlalchemy==2.0.23
+fuzzywuzzy==0.18.0
+python-Levenshtein==0.25.0
+beautifulsoup4==4.15.0
+Flask-Mail==0.10.0
+python-dotenv==1.0.0
+requests==2.31.0
+gunicorn==21.2.0

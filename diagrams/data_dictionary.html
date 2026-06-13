@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Data Dictionary – FTMK Smart Timetable Arrangement System</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Mono:wght@400;500&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #ffffff;
+      font-family: 'Inter', sans-serif;
+      color: #1a1a2e;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* ── Cover Page ───────────────────────────── */
+    .cover {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(160deg, #1e3a5f 0%, #2563eb 100%);
+      color: #fff;
+      page-break-after: always;
+      padding: 60px 40px;
+      text-align: center;
+    }
+    .cover .badge {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 50px;
+      padding: 6px 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+    .cover h1 {
+      font-size: 36px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      max-width: 640px;
+    }
+    .cover h1 span { color: #93c5fd; }
+    .cover .sub {
+      font-size: 15px;
+      color: rgba(255,255,255,0.75);
+      max-width: 500px;
+      margin-bottom: 48px;
+    }
+    .cover-meta {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .cover-meta .item {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      padding: 14px 24px;
+      min-width: 150px;
+    }
+    .cover-meta .item .label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
+    .cover-meta .item .value { font-size: 14px; font-weight: 600; }
+    .cover .footer-note { margin-top: 48px; font-size: 11px; color: rgba(255,255,255,0.5); }
+
+    /* ── Page Layout ──────────────────────────── */
+    .page {
+      padding: 48px 52px;
+      page-break-after: always;
+    }
+    .page:last-child { page-break-after: auto; }
+
+    /* ── Section Header ───────────────────────── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    .section-num {
+      background: #1e3a5f;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 8px;
+      padding: 4px 12px;
+    }
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1e3a5f;
+    }
+    .section-subtitle {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    /* ── Table Label & Desc ───────────────────── */
+    .table-label {
+      display: inline-block;
+      background: #1e3a5f;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: 'Fira Mono', monospace;
+      letter-spacing: 0.5px;
+      border-radius: 6px 6px 0 0;
+      padding: 6px 16px;
+    }
+    .table-desc {
+      font-size: 12px;
+      color: #475569;
+      margin-bottom: 12px;
+      margin-top: 5px;
+      padding-left: 2px;
+    }
+
+    /* ── Data Table ───────────────────────────── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 36px;
+      border-radius: 0 8px 8px 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+    thead tr { background: #1e3a5f; color: #fff; }
+    thead th {
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+    }
+    tbody tr { background: #fff; }
+    tbody tr:nth-child(even) { background: #f8fafd; }
+    tbody td {
+      padding: 9px 14px;
+      border-bottom: 1px solid #e8edf5;
+      font-size: 12px;
+      vertical-align: top;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+
+    .col-element { font-family: 'Fira Mono', monospace; font-weight: 500; color: #1d4ed8; font-size: 11.5px; }
+    .col-type    { font-family: 'Fira Mono', monospace; color: #7c3aed; font-size: 11px; }
+    .col-size    { font-family: 'Fira Mono', monospace; color: #374151; font-size: 11px; text-align: center; }
+    .col-example { color: #166534; font-size: 11.5px; font-style: italic; }
+
+    /* ── Overview summary table ───────────────── */
+    .overview-table thead tr { background: #1e3a5f; }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .cover { min-height: 100vh; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════ -->
+<!--  COVER PAGE                               -->
+<!-- ══════════════════════════════════════════ -->
+<div class="cover">
+  <div class="badge">Final Year Project &nbsp;|&nbsp; BITU 3973</div>
+  <h1>Data Dictionary<br><span>FTMK Smart Timetable</span><br>Arrangement System</h1>
+  <p class="sub">A comprehensive reference of all database tables, data elements, types, sizes, and example values used in the system.</p>
+  <div class="cover-meta">
+    <div class="item"><div class="label">Institution</div><div class="value">UTEM</div></div>
+    <div class="item"><div class="label">Faculty</div><div class="value">FTMK</div></div>
+    <div class="item"><div class="label">Tables</div><div class="value">5 Tables</div></div>
+    <div class="item"><div class="label">Version</div><div class="value">1.0</div></div>
+  </div>
+  <p class="footer-note">FTMK Smart Timetable Arrangement System &nbsp;&bull;&nbsp; Academic Session 2025/2026</p>
+</div>
+
+
+<!-- ══════════════════════════════════════════ -->
+<!--  PAGE 1 — Overview                        -->
+<!-- ══════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <span class="section-num">1</span>
+    <div>
+      <div class="section-title">Overview</div>
+      <div class="section-subtitle">Database structure summary — 5 core tables</div>
+    </div>
+  </div>
+
+  <p style="font-size:13px;color:#374151;margin-bottom:20px;line-height:1.8;">
+    The FTMK Smart Timetable Arrangement System uses a relational database with <strong>5 core tables</strong>. The database stores user accounts, master timetable data extracted from faculty PDFs, student-saved timetable combinations, social friend links, and lecturer profile information.
+  </p>
+
+  <table class="overview-table">
+    <thead>
+      <tr>
+        <th style="width:5%">#</th>
+        <th style="width:25%">Table Name</th>
+        <th>Description</th>
+        <th style="width:12%">No. of Fields</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td class="col-element">users</td>
+        <td>Stores all system user accounts (admins and students) with authentication and academic profile data.</td>
+        <td style="text-align:center;">10</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td class="col-element">timetable</td>
+        <td>Master timetable data extracted from faculty PDF uploads. Each row is one class session.</td>
+        <td style="text-align:center;">11</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td class="col-element">saved_timetables</td>
+        <td>Stores timetable combinations that students have saved to their profile, including a primary flag.</td>
+        <td style="text-align:center;">6</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td class="col-element">saved_friends</td>
+        <td>Stores friend relationships between students for social timetable comparison.</td>
+        <td style="text-align:center;">5</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td class="col-element">lecturer_profiles</td>
+        <td>Stores lecturer contact and office information, populated by web scraping the faculty staff directory.</td>
+        <td style="text-align:center;">7</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ══════════════════════════════════════════ -->
+<!--  PAGE 2 — Table: users                    -->
+<!-- ══════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <span class="section-num">2</span>
+    <div>
+      <div class="section-title">Table: users</div>
+      <div class="section-subtitle">Stores all registered system users — administrators and students</div>
+    </div>
+  </div>
+
+  <div class="table-label">users</div>
+  <p class="table-desc">Contains authentication credentials and academic profile information for every registered user in the system.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Data Element</th>
+        <th>Description</th>
+        <th>Data Type</th>
+        <th>Size</th>
+        <th>Example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-element">id</td>
+        <td>Unique identifier for each user. Auto-incremented by the database.</td>
+        <td class="col-type">INTEGER</td>
+        <td class="col-size">—</td>
+        <td class="col-example">1, 2, 3</td>
+      </tr>
+      <tr>
+        <td class="col-element">name</td>
+        <td>Full name of the user as provided during registration.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">100</td>
+        <td class="col-example">Ahmad Syahmi bin Ali</td>
+      </tr>
+      <tr>
+        <td class="col-element">email</td>
+        <td>User's email address. Must be unique across all accounts.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">120</td>
+        <td class="col-example">B032210001@student.utem.edu.my</td>
+      </tr>
+      <tr>
+        <td class="col-element">password_hash</td>
+        <td>Werkzeug-hashed password string (scrypt). Never stores plain-text password.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">256</td>
+        <td class="col-example">scrypt:32768:8:1$abc...</td>
+      </tr>
+      <tr>
+        <td class="col-element">role</td>
+        <td>Role of the user in the system. Determines access level and portal shown after login.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">20</td>
+        <td class="col-example">student, admin</td>
+      </tr>
+      <tr>
+        <td class="col-element">username</td>
+        <td>Unique login username chosen by the student during registration. Used at login.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">50</td>
+        <td class="col-example">syahmi2024</td>
+      </tr>
+      <tr>
+        <td class="col-element">matric_no</td>
+        <td>Student's matriculation number. Used in social features and classmate matching.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">50</td>
+        <td class="col-example">B032210001</td>
+      </tr>
+      <tr>
+        <td class="col-element">year</td>
+        <td>Student's current year of study.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">20</td>
+        <td class="col-example">Year 1, Year 3</td>
+      </tr>
+      <tr>
+        <td class="col-element">course</td>
+        <td>Programme code the student is enrolled in.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">50</td>
+        <td class="col-example">BITA, BITC, BITP</td>
+      </tr>
+      <tr>
+        <td class="col-element">group_name</td>
+        <td>Student's assigned class group. Used for classmate matching features.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">50</td>
+        <td class="col-example">S1G1, S2G3</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ══════════════════════════════════════════ -->
+<!--  PAGE 3 — Table: timetable                -->
+<!-- ══════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <span class="section-num">3</span>
+    <div>
+      <div class="section-title">Table: timetable</div>
+      <div class="section-subtitle">Master timetable data extracted from faculty PDF uploads</div>
+    </div>
+  </div>
+
+  <div class="table-label">timetable</div>
+  <p class="table-desc">Each row represents a single class session — one subject, one group, one time slot. Populated by the PDF extraction module triggered by the Admin.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Data Element</th>
+        <th>Description</th>
+        <th>Data Type</th>
+        <th>Size</th>
+        <th>Example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-element">id</td>
+        <td>Unique identifier for each timetable record.</td>
+        <td class="col-type">INTEGER</td>
+        <td class="col-size">—</td>
+        <td class="col-example">1, 42, 305</td>
+      </tr>
+      <tr>
+        <td class="col-element">course_code</td>
+        <td>Programme code this class session belongs to.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">50</td>
+        <td class="col-example">BITA, BITC, BITP</td>
+      </tr>
+      <tr>
+        <td class="col-element">semester</td>
+        <td>Semester and academic session label as extracted from the PDF.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">50</td>
+        <td class="col-example">Semester 2 Session 2025/2026</td>
+      </tr>
+      <tr>
+        <td class="col-element">group_name</td>
+        <td>Class group identifier for this session. Differentiates parallel groups of the same subject.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">50</td>
+        <td class="col-example">S1G1, S2G3</td>
+      </tr>
+      <tr>
+        <td class="col-element">subject_code</td>
+        <td>Subject code as defined by the faculty curriculum.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">50</td>
+        <td class="col-example">BITP1123, BITU3973</td>
+      </tr>
+      <tr>
+        <td class="col-element">subject_name</td>
+        <td>Full descriptive name of the subject. Propagated globally if updated by admin.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">200</td>
+        <td class="col-example">Programming Technique</td>
+      </tr>
+      <tr>
+        <td class="col-element">class_type</td>
+        <td>Type of the class session — Lecture or Laboratory.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">50</td>
+        <td class="col-example">LEC, LAB</td>
+      </tr>
+      <tr>
+        <td class="col-element">day</td>
+        <td>Day of the week on which the class is held.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">20</td>
+        <td class="col-example">MONDAY, FRIDAY</td>
+      </tr>
+      <tr>
+        <td class="col-element">start_time</td>
+        <td>Class start time in 24-hour format. Used for schedule conflict detection.</td>
+        <td class="col-type">TIME</td>
+        <td class="col-size">—</td>
+        <td class="col-example">08:00:00, 14:00:00</td>
+      </tr>
+      <tr>
+        <td class="col-element">end_time</td>
+        <td>Class end time in 24-hour format. Used for schedule conflict detection.</td>
+        <td class="col-type">TIME</td>
+        <td class="col-size">—</td>
+        <td class="col-example">10:00:00, 16:00:00</td>
+      </tr>
+      <tr>
+        <td class="col-element">room</td>
+        <td>Assigned classroom or laboratory room code. May be TBA if not yet assigned.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">100</td>
+        <td class="col-example">BK11, BR09, Lab3</td>
+      </tr>
+      <tr>
+        <td class="col-element">lecturer_name</td>
+        <td>Name of the assigned lecturer for this session. Linked to lecturer_profiles via fuzzy matching.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">200</td>
+        <td class="col-example">DR. AHMAD FADZIL BIN ISMAIL</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ══════════════════════════════════════════ -->
+<!--  PAGE 4 — saved_timetables & saved_friends -->
+<!-- ══════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <span class="section-num">4</span>
+    <div>
+      <div class="section-title">Table: saved_timetables</div>
+      <div class="section-subtitle">Student-saved timetable combinations generated by the Genetic Algorithm</div>
+    </div>
+  </div>
+
+  <div class="table-label">saved_timetables</div>
+  <p class="table-desc">Each row is one timetable combination a student has saved. The full schedule is stored as a JSON string. One record per student may be flagged as Primary.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Data Element</th>
+        <th>Description</th>
+        <th>Data Type</th>
+        <th>Size</th>
+        <th>Example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-element">id</td>
+        <td>Unique identifier for each saved timetable record.</td>
+        <td class="col-type">INTEGER</td>
+        <td class="col-size">—</td>
+        <td class="col-example">1, 5, 12</td>
+      </tr>
+      <tr>
+        <td class="col-element">user_id</td>
+        <td>References the student who saved this timetable. Foreign key to users table.</td>
+        <td class="col-type">INTEGER</td>
+        <td class="col-size">—</td>
+        <td class="col-example">3, 7</td>
+      </tr>
+      <tr>
+        <td class="col-element">name</td>
+        <td>User-defined label for this saved timetable combination.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">100</td>
+        <td class="col-example">My Sem 2 Timetable</td>
+      </tr>
+      <tr>
+        <td class="col-element">data</td>
+        <td>Full timetable combination stored as a JSON string — includes subject, group, day, time, room details.</td>
+        <td class="col-type">TEXT</td>
+        <td class="col-size">—</td>
+        <td class="col-example">[{"subject": "BITP1123", "group_name": "S1G1", ...}]</td>
+      </tr>
+      <tr>
+        <td class="col-element">is_primary</td>
+        <td>Flag indicating whether this is the student's primary timetable. Used in social and analytics features.</td>
+        <td class="col-type">BOOLEAN</td>
+        <td class="col-size">—</td>
+        <td class="col-example">True, False</td>
+      </tr>
+      <tr>
+        <td class="col-element">created_at</td>
+        <td>Timestamp when this timetable was saved. Auto-set by the database.</td>
+        <td class="col-type">DATETIME</td>
+        <td class="col-size">—</td>
+        <td class="col-example">2025-06-10 14:30:00</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-header" style="margin-top:8px;">
+    <span class="section-num">5</span>
+    <div>
+      <div class="section-title">Table: saved_friends</div>
+      <div class="section-subtitle">Social links between students for timetable comparison</div>
+    </div>
+  </div>
+
+  <div class="table-label">saved_friends</div>
+  <p class="table-desc">Records a friend link from one student to another, identified by matric number. Used to overlay timetables and find common free time slots.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Data Element</th>
+        <th>Description</th>
+        <th>Data Type</th>
+        <th>Size</th>
+        <th>Example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-element">id</td>
+        <td>Unique identifier for each friend relationship record.</td>
+        <td class="col-type">INTEGER</td>
+        <td class="col-size">—</td>
+        <td class="col-example">1, 3, 8</td>
+      </tr>
+      <tr>
+        <td class="col-element">user_id</td>
+        <td>The student who added this friend. Foreign key to users table.</td>
+        <td class="col-type">INTEGER</td>
+        <td class="col-size">—</td>
+        <td class="col-example">2, 5</td>
+      </tr>
+      <tr>
+        <td class="col-element">friend_matric</td>
+        <td>Matric number of the added friend. Used to retrieve the friend's primary timetable for comparison.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">50</td>
+        <td class="col-example">B032210045</td>
+      </tr>
+      <tr>
+        <td class="col-element">friend_name</td>
+        <td>Full name of the friend at the time they were added. Stored for display purposes.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">100</td>
+        <td class="col-example">Nurul Ain binti Razak</td>
+      </tr>
+      <tr>
+        <td class="col-element">created_at</td>
+        <td>Timestamp recording when this friendship link was created.</td>
+        <td class="col-type">DATETIME</td>
+        <td class="col-size">—</td>
+        <td class="col-example">2025-06-10 09:15:00</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ══════════════════════════════════════════ -->
+<!--  PAGE 5 — Table: lecturer_profiles        -->
+<!-- ══════════════════════════════════════════ -->
+<div class="page">
+  <div class="section-header">
+    <span class="section-num">6</span>
+    <div>
+      <div class="section-title">Table: lecturer_profiles</div>
+      <div class="section-subtitle">Lecturer contact and office info — populated via web scraping the FTMK staff directory</div>
+    </div>
+  </div>
+
+  <div class="table-label">lecturer_profiles</div>
+  <p class="table-desc">Stores official lecturer profile data scraped from the FTMK staff directory website. Linked to timetable records at runtime via fuzzy name matching (confidence threshold &gt; 80%).</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Data Element</th>
+        <th>Description</th>
+        <th>Data Type</th>
+        <th>Size</th>
+        <th>Example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="col-element">id</td>
+        <td>Unique identifier for each lecturer profile record.</td>
+        <td class="col-type">INTEGER</td>
+        <td class="col-size">—</td>
+        <td class="col-example">1, 10, 24</td>
+      </tr>
+      <tr>
+        <td class="col-element">name</td>
+        <td>Full name of the lecturer as scraped from the official staff directory. Used as the matching key against timetable.lecturer_name.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">200</td>
+        <td class="col-example">DR. AHMAD FADZIL BIN ISMAIL</td>
+      </tr>
+      <tr>
+        <td class="col-element">title</td>
+        <td>Academic or professional title of the lecturer.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">100</td>
+        <td class="col-example">Dr., Prof., Ts. Dr.</td>
+      </tr>
+      <tr>
+        <td class="col-element">email</td>
+        <td>Official UTEM email address of the lecturer.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">120</td>
+        <td class="col-example">fadzil@utem.edu.my</td>
+      </tr>
+      <tr>
+        <td class="col-element">department</td>
+        <td>Department or centre within FTMK that the lecturer belongs to.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">100</td>
+        <td class="col-example">Dept. of Software Engineering</td>
+      </tr>
+      <tr>
+        <td class="col-element">block</td>
+        <td>Building or block where the lecturer's office is located.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">50</td>
+        <td class="col-example">Block A, Block B</td>
+      </tr>
+      <tr>
+        <td class="col-element">office_room</td>
+        <td>Specific room number or code of the lecturer's office.</td>
+        <td class="col-type">VARCHAR</td>
+        <td class="col-size">100</td>
+        <td class="col-example">B1-17, B2-09</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

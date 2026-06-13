@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Activity Diagram – Admin</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #ffffff;
+      font-family: 'Inter', sans-serif;
+      color: #1a1a2e;
+      padding: 40px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: #1e3a5f;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 36px;
+    }
+    .diagram-container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #f8fafd;
+      border: 1px solid #dde4ef;
+      border-radius: 12px;
+      padding: 32px;
+    }
+    .mermaid { display: flex; justify-content: center; }
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 11px;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <h1>Activity Diagram: Admin Portal</h1>
+  <p class="subtitle">FTMK Smart Timetable Arrangement System</p>
+
+  <div class="diagram-container">
+    <div class="mermaid">
+flowchart TD
+    A([Start]) --> B[Login as Admin]
+    B --> C[Admin Dashboard\nView Master Timetable]
+
+    C --> D{Choose Action}
+
+    %% === UPLOAD TIMETABLE PDF ===
+    D -->|Upload Timetable PDF| E[Select Semester Name\nand PDF File]
+    E --> F{Valid PDF\nFile?}
+    F -- No --> G[Show: No file or invalid format]
+    G --> C
+    F -- Yes --> H[Save PDF to Server]
+    H --> I[Run PDF Extractor\nin Background Thread]
+    I --> J[Parse Timetable Data\nSubject, Group, Day,\nTime, Room, Lecturer]
+    J --> K{Extraction\nSuccessful?}
+    K -- No --> L[Show: Extraction Error]
+    L --> C
+    K -- Yes --> M[Save Records to Database]
+    M --> N[Show: N records extracted]
+    N --> C
+
+    %% === MANAGE TIMETABLE ===
+    D -->|Manage Timetable| O[View All Records\nGrouped by Semester & Course]
+    O --> P{Action?}
+    P -->|Edit Record| Q[Update Fields\nCode, Day, Time, Room,\nLecturer, Class Type]
+    Q --> R[Propagate Subject Name\nChanges Globally]
+    R --> O
+    P -->|Delete Selected| S[Bulk Delete Selected Records]
+    S --> O
+    P -->|Done| C
+
+    %% === MANAGE STUDENTS ===
+    D -->|Manage Students| T[View All Student Accounts]
+    T --> U{Action?}
+    U -->|Add Student| V[Enter Student Details\nName, Username, Email,\nMatric, Course, Year, Group]
+    V --> W{Duplicate\nCheck Passed?}
+    W -- No --> X[Show: Already Exists]
+    X --> T
+    W -- Yes --> Y[Create Student Account]
+    Y --> T
+    U -->|Edit Student| Z[Modify Student Info\nor Reset Password]
+    Z --> T
+    U -->|Delete Student| AA[Remove Student +\nClear Saved Timetables\nand Friends]
+    AA --> T
+    U -->|Done| C
+
+    %% === MANAGE LECTURERS ===
+    D -->|Manage Lecturers| AB[View Lecturer Profiles\nand Workload Stats]
+    AB --> AC{Action?}
+    AC -->|Add Profile| AD[Enter Lecturer Details\nName, Title, Email,\nDept, Block, Room]
+    AD --> AB
+    AC -->|Edit Profile| AE[Update Lecturer Info]
+    AE --> AB
+    AC -->|Delete Profile| AF[Remove Profile]
+    AF --> AB
+    AC -->|Sync from Web| AG[Scrape FTMK Staff\nDirectory Website]
+    AG --> AH{Scrape\nSuccessful?}
+    AH -- No --> AI[Show: Scraper Error]
+    AI --> AB
+    AH -- Yes --> AJ[Update / Insert\nLecturer Profiles]
+    AJ --> AB
+    AC -->|Done| C
+
+    %% === LOGOUT ===
+    D -->|Logout| END([End])
+
+    style A fill:#1e3a5f,color:#fff,stroke:none
+    style END fill:#1e3a5f,color:#fff,stroke:none
+    style G fill:#fff0f0,color:#cc0000,stroke:#ff6b6b
+    style L fill:#fff0f0,color:#cc0000,stroke:#ff6b6b
+    style X fill:#fff0f0,color:#cc0000,stroke:#ff6b6b
+    style AI fill:#fff0f0,color:#cc0000,stroke:#ff6b6b
+    style N fill:#e8f5e9,color:#1b5e20,stroke:#4caf50
+    style M fill:#e3f2fd,color:#0d47a1,stroke:#2196f3
+    style I fill:#ede9fe,color:#3b0764,stroke:#a78bfa
+    style J fill:#ede9fe,color:#3b0764,stroke:#a78bfa
+    style AG fill:#ede9fe,color:#3b0764,stroke:#a78bfa
+    </div>
+  </div>
+
+  <p class="footer">BITU 3973 Final Year Project I &nbsp;|&nbsp; FTMK, UTEM</p>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        background: '#f8fafd',
+        primaryColor: '#dbeafe',
+        primaryTextColor: '#1e3a5f',
+        primaryBorderColor: '#93c5fd',
+        lineColor: '#374151',
+        secondaryColor: '#f0fdf4',
+        tertiaryColor: '#fff',
+        fontFamily: 'Inter, sans-serif',
+        fontSize: '14px'
+      },
+      flowchart: { curve: 'basis', padding: 20 }
+    });
+  </script>
+</body>
+</html>

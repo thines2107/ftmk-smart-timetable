@@ -1,0 +1,336 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="login-container" style="min-height: 90vh; align-items: flex-start; padding-top: 3rem; padding-bottom: 3rem;">
+    <div class="glass-card login-card" style="max-width: 500px; width: 100%; padding: 2.5rem; margin: auto;">
+        <div class="text-center" style="margin-bottom: 2rem;">
+            <i class='bx bxs-user-plus' style="font-size: 3.5rem; color: var(--primary);"></i>
+            <h2 style="margin-top: 0.5rem;">Student Registration</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Create your account to view timetables</p>
+        </div>
+        
+        <form id="register-form" onsubmit="handleRegistration(event)" autocomplete="off">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="reg-name" class="premium-input" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()" autocomplete="off" required>
+            </div>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="reg-username" class="premium-input" oninput="checkUsername()" autocomplete="off" required>
+                <p id="username-text" style="font-size: 0.75rem; color: var(--error); margin-top: 0.3rem; display: none;">Username is already taken.</p>
+            </div>
+            
+            <div class="form-group">
+                <label>Matric No</label>
+                <input type="text" id="reg-matric" class="premium-input" placeholder="e.g. B032110001" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase(); checkMatric()" required>
+                <p id="matric-text" style="font-size: 0.75rem; color: var(--error); margin-top: 0.3rem; display: none;">Matric No is already registered.</p>
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="reg-email" class="premium-input" oninput="checkEmail()" required>
+                <p id="email-text" style="font-size: 0.75rem; color: var(--error); margin-top: 0.3rem; display: none;">Email Address is already registered.</p>
+            </div>
+            
+            <div class="form-group">
+                <label>Course</label>
+                <select id="reg-course" class="premium-input" style="color: var(--text-muted);" required>
+                    <option value="" disabled selected>Select</option>
+                    <option value="BITA">BITA</option>
+                    <option value="BITC">BITC</option>
+                    <option value="BITD">BITD</option>
+                    <option value="BITI">BITI</option>
+                    <option value="BITM">BITM</option>
+                    <option value="BITP">BITP</option>
+                    <option value="BITS">BITS</option>
+                    <option value="BITW">BITW</option>
+                    <option value="BITZ">BITZ</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Year</label>
+                <select id="reg-year" class="premium-input" style="color: var(--text-muted);" required>
+                    <option value="" disabled selected>Select</option>
+                    <option value="1">Year 1</option>
+                    <option value="2">Year 2</option>
+                    <option value="3">Year 3</option>
+                    <option value="4">Year 4</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Group</label>
+                <input type="text" id="reg-group" class="premium-input" placeholder="e.g. S1G1" required>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="reg-pass" class="premium-input" oninput="checkStrength()" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" required>
+                <!-- Strength Meter -->
+                <div style="height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin-top: 0.5rem; overflow: hidden;">
+                    <div id="strength-bar" style="height: 100%; width: 0%; background: var(--error); transition: all 0.3s ease;"></div>
+                </div>
+                <p id="strength-text" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem;">Minimum 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special character</p>
+            </div>
+            
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" id="reg-confirm" class="premium-input" oninput="checkMatch()" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" required>
+                <p id="match-text" style="font-size: 0.75rem; color: var(--error); margin-top: 0.3rem; display: none;">Passwords do not match!</p>
+            </div>
+            
+            <div id="reg-error" class="alert alert-danger" style="display: none; margin-top: 1rem;"></div>
+            <div id="reg-success" class="alert" style="background: rgba(16, 185, 129, 0.2); color: #10B981; border: 1px solid #10B981; display: none; margin-top: 1rem; padding: 1rem; border-radius: 8px;"></div>
+
+            <button type="submit" id="btn-register" class="btn-primary" style="width: 100%; margin-top: 1rem;">Register Account</button>
+            
+            <div style="text-align: center; margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;">
+                Already have an account? <a href="/" style="color: var(--primary); font-weight: bold; text-decoration: none;">Login</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let isPasswordStrong = false;
+    let isPasswordMatch = false;
+    let isUsernameAvailable = false;
+    let isMatricAvailable = false;
+    let isEmailAvailable = false;
+    let usernameTimer;
+    let matricTimer;
+    let emailTimer;
+
+    function checkUsername() {
+        clearTimeout(usernameTimer);
+        const uname = document.getElementById('reg-username').value;
+        const text = document.getElementById('username-text');
+        
+        if (uname.length === 0) {
+            text.style.display = 'none';
+            isUsernameAvailable = false;
+            return;
+        }
+        
+        usernameTimer = setTimeout(() => {
+            fetch('/api/check_username?username=' + encodeURIComponent(uname))
+            .then(res => res.json())
+            .then(data => {
+                if(data.taken) {
+                    text.style.display = 'block';
+                    isUsernameAvailable = false;
+                } else {
+                    text.style.display = 'none';
+                    isUsernameAvailable = true;
+                }
+            });
+        }, 500); // 500ms debounce
+    }
+
+    function checkMatric() {
+        clearTimeout(matricTimer);
+        const matric = document.getElementById('reg-matric').value;
+        const text = document.getElementById('matric-text');
+        
+        if (matric.length === 0) {
+            text.style.display = 'none';
+            isMatricAvailable = false;
+            return;
+        }
+        
+        matricTimer = setTimeout(() => {
+            fetch('/api/check_matric?matric_no=' + encodeURIComponent(matric))
+            .then(res => res.json())
+            .then(data => {
+                if(data.taken) {
+                    text.style.display = 'block';
+                    isMatricAvailable = false;
+                } else {
+                    text.style.display = 'none';
+                    isMatricAvailable = true;
+                }
+            });
+        }, 500);
+    }
+
+    function checkEmail() {
+        clearTimeout(emailTimer);
+        const email = document.getElementById('reg-email').value;
+        const text = document.getElementById('email-text');
+        
+        if (email.length === 0) {
+            text.style.display = 'none';
+            isEmailAvailable = false;
+            return;
+        }
+        
+        emailTimer = setTimeout(() => {
+            fetch('/api/check_email?email=' + encodeURIComponent(email))
+            .then(res => res.json())
+            .then(data => {
+                if(data.taken) {
+                    text.style.display = 'block';
+                    isEmailAvailable = false;
+                } else {
+                    text.style.display = 'none';
+                    isEmailAvailable = true;
+                }
+            });
+        }, 500);
+    }
+
+    function checkStrength() {
+        const pass = document.getElementById('reg-pass').value;
+        const bar = document.getElementById('strength-bar');
+        const text = document.getElementById('strength-text');
+        
+        let score = 0;
+        if (pass.length >= 8) score++;
+        if (/[A-Z]/.test(pass)) score++;
+        if (/[a-z]/.test(pass)) score++;
+        if (/[0-9]/.test(pass)) score++;
+        if (/[^A-Za-z0-9]/.test(pass)) score++;
+
+        switch(score) {
+            case 0:
+            case 1:
+            case 2:
+                bar.style.width = "25%";
+                bar.style.background = "#EF4444"; // Red
+                text.innerText = "Weak - Keep typing...";
+                text.style.color = "#EF4444";
+                isPasswordStrong = false;
+                break;
+            case 3:
+                bar.style.width = "50%";
+                bar.style.background = "#F97316"; // Orange
+                text.innerText = "Fair - Add numbers/special characters";
+                text.style.color = "#F97316";
+                isPasswordStrong = false;
+                break;
+            case 4:
+                bar.style.width = "75%";
+                bar.style.background = "#EAB308"; // Yellow
+                text.innerText = "Good - Almost there!";
+                text.style.color = "#EAB308";
+                isPasswordStrong = false;
+                break;
+            case 5:
+                bar.style.width = "100%";
+                bar.style.background = "#10B981"; // Green
+                text.innerText = "Strong - Ready to go!";
+                text.style.color = "#10B981";
+                isPasswordStrong = true;
+                break;
+        }
+        
+        if(pass.length === 0) {
+            bar.style.width = "0%";
+            text.innerText = "Minimum 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special character";
+            text.style.color = "var(--text-muted)";
+            isPasswordStrong = false;
+        }
+        checkMatch();
+    }
+
+    function checkMatch() {
+        const pass = document.getElementById('reg-pass').value;
+        const confirm = document.getElementById('reg-confirm').value;
+        const text = document.getElementById('match-text');
+        
+        if (confirm.length > 0) {
+            if (pass !== confirm) {
+                text.style.display = "block";
+                isPasswordMatch = false;
+            } else {
+                text.style.display = "none";
+                isPasswordMatch = true;
+            }
+        } else {
+            text.style.display = "none";
+            isPasswordMatch = false;
+        }
+    }
+
+    function handleRegistration(e) {
+        e.preventDefault();
+        
+        const errorBox = document.getElementById('reg-error');
+        const successBox = document.getElementById('reg-success');
+        const btn = document.getElementById('btn-register');
+        
+        errorBox.style.display = "none";
+        successBox.style.display = "none";
+        
+        if (!isPasswordStrong) {
+            errorBox.innerText = "Password does not meet the strict complexity requirements.";
+            errorBox.style.display = "block";
+            return;
+        }
+        
+        if (!isPasswordMatch) {
+            errorBox.innerText = "Passwords do not match.";
+            errorBox.style.display = "block";
+            return;
+        }
+        
+        if (!isUsernameAvailable) {
+            errorBox.innerText = "Please choose an available username.";
+            errorBox.style.display = "block";
+            return;
+        }
+        
+        if (!isMatricAvailable) {
+            errorBox.innerText = "This Matric No is already registered.";
+            errorBox.style.display = "block";
+            return;
+        }
+        
+        if (!isEmailAvailable) {
+            errorBox.innerText = "This Email Address is already registered.";
+            errorBox.style.display = "block";
+            return;
+        }
+        
+        btn.innerText = "Processing...";
+        btn.disabled = true;
+        
+        const payload = {
+            name: document.getElementById('reg-name').value,
+            username: document.getElementById('reg-username').value,
+            matric_no: document.getElementById('reg-matric').value,
+            email: document.getElementById('reg-email').value,
+            course: document.getElementById('reg-course').value,
+            year: document.getElementById('reg-year').value,
+            group_name: document.getElementById('reg-group').value,
+            password: document.getElementById('reg-pass').value
+        };
+
+        fetch('/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                errorBox.innerText = data.error;
+                errorBox.style.display = "block";
+                btn.innerText = "Register Account";
+                btn.disabled = false;
+            } else {
+                document.getElementById('register-form').reset();
+                successBox.innerText = data.message + " Redirecting to login...";
+                successBox.style.display = "block";
+                setTimeout(() => {
+                    window.location.href = "/";
+                }, 2000);
+            }
+        })
+        .catch(err => {
+            errorBox.innerText = "A network error occurred. Please try again.";
+            errorBox.style.display = "block";
+            btn.innerText = "Register Account";
+            btn.disabled = false;
+        });
+    }
+</script>
+{% endblock %}

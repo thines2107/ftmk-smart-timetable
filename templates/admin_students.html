@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="header-section" style="text-align: left; margin-bottom: 2rem;">
+    <h1 style="margin-top: 0;">Student Management</h1>
+    <p>View all registered students, modify details, or add new students.</p>
+</div>
+
+<div class="glass-card" style="margin-bottom: 2rem; display: flex; justify-content: space-between; gap: 1rem;">
+    <div class="form-group" style="margin-bottom: 0; flex-grow: 1;">
+        <div style="position: relative;">
+            <i class='bx bx-search' style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font-size: 1.5rem; color: var(--text-muted);"></i>
+            <input type="search" id="user-search" autocomplete="new-password" name="prevent_autofill_search" class="form-control" style="width: 100%; padding: 1rem 1.5rem 1rem 3.5rem; font-size: 1.1rem; border: 2px solid var(--surface-border); border-radius: 8px; background: var(--input-bg); color: var(--text-main);" placeholder="Search by name, matric no, or course..." onkeyup="filterUsers()">
+        </div>
+    </div>
+    <button class="btn-primary" onclick="openAddModal()" style="white-space: nowrap; height: 100%;"><i class='bx bx-plus'></i> Add Student</button>
+</div>
+
+<div class="glass-card">
+    <div class="table-responsive">
+        <table class="premium-table" id="users-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Matric No</th>
+                    <th>Course</th>
+                    <th>Year</th>
+                    <th>Email</th>
+                    <th>Timetables</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr class="user-row">
+                    <td style="font-weight: 600; color: var(--text-main);">{{ u.name.title() }}</td>
+                    <td class="matric-cell" style="color: var(--primary); font-weight: 500;">{{ u.matric_no|upper }}</td>
+                    <td class="course-cell"><span class="badge success">{{ u.course }}</span></td>
+                    <td>Year {{ u.year }}</td>
+                    <td>{{ u.email }}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class='bx bxs-star' style="color: #F59E0B;"></i>
+                            <span style="font-weight: 600;">{{ u.saved_timetables }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn-secondary" style="padding: 0.4rem 0.6rem; font-size: 0.9rem;" onclick="openEditModal({{ u.id }}, '{{ u.name|escape }}', '{{ u.matric_no|escape }}', '{{ u.course|escape }}', '{{ u.year|escape }}', '{{ u.email|escape }}')"><i class='bx bx-edit'></i> Edit</button>
+                            <button class="btn-primary" style="padding: 0.4rem 0.6rem; font-size: 0.9rem; background: var(--error);" onclick="deleteStudent({{ u.id }})"><i class='bx bx-trash'></i></button>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">No students registered yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Modal -->
+<div id="addModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div class="glass-card" style="width: 100%; max-width: 500px; padding: 2rem; border-top: 4px solid var(--primary);">
+        <h2 style="display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid var(--surface-border); padding-bottom: 1rem; margin-bottom: 1rem;"><i class='bx bx-user-plus' style="color: var(--primary); font-size: 1.5rem;"></i> Add Student</h2>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="add-name" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block; font-weight: 500;">Full Name</label>
+                    <input type="text" id="add-name" class="premium-input" placeholder="e.g. Ali Bin Abu" autocomplete="new-password">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="add-username" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block; font-weight: 500;">Username</label>
+                    <input type="text" id="add-username" class="premium-input" placeholder="e.g. ali123" autocomplete="new-password">
+                </div>
+                <div class="form-group" style="margin-bottom: 0; grid-column: span 2;">
+                    <label for="add-email" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block; font-weight: 500;">Email Address</label>
+                    <input type="email" id="add-email" class="premium-input" placeholder="e.g. ali@student.utem.edu.my" autocomplete="new-password">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="add-matric" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block; font-weight: 500;">Matric No</label>
+                    <input type="text" id="add-matric" class="premium-input" placeholder="e.g. B032110001" autocomplete="new-password">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="add-course" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block; font-weight: 500;">Course Code</label>
+                    <input type="text" id="add-course" class="premium-input" placeholder="e.g. BITU" autocomplete="new-password">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="add-year" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block; font-weight: 500;">Year of Study</label>
+                    <input type="number" id="add-year" class="premium-input" placeholder="e.g. 3" min="1" max="5">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="add-password" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block; font-weight: 500;">Password</label>
+                    <input type="password" id="add-password" class="premium-input" placeholder="••••••••" autocomplete="new-password">
+                </div>
+            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem; justify-content: flex-end;">
+                <button class="btn-primary" onclick="submitAdd()">Add</button>
+                <button class="btn-secondary" onclick="document.getElementById('addModal').style.display='none'">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="editModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div class="glass-card" style="width: 100%; max-width: 500px; padding: 2rem; border-top: 4px solid var(--secondary);">
+        <h2 style="display: flex; align-items: center; gap: 0.5rem; border-bottom: 1px solid var(--surface-border); padding-bottom: 1rem; margin-bottom: 1rem;"><i class='bx bx-edit' style="color: var(--secondary); font-size: 1.5rem;"></i> Edit Student</h2>
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <input type="hidden" id="edit-id">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group" style="margin-bottom: 0; grid-column: span 2;">
+                    <label for="edit-name" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block; font-weight: 500;">Full Name</label>
+                    <input type="text" id="edit-name" class="premium-input" autocomplete="new-password">
+                </div>
+                <div class="form-group" style="margin-bottom: 0; grid-column: span 2;">
+                    <label for="edit-email" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block; font-weight: 500;">Email Address</label>
+                    <input type="email" id="edit-email" class="premium-input" autocomplete="new-password">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="edit-matric" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block; font-weight: 500;">Matric No</label>
+                    <input type="text" id="edit-matric" class="premium-input" autocomplete="new-password">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="edit-course" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block; font-weight: 500;">Course Code</label>
+                    <input type="text" id="edit-course" class="premium-input" autocomplete="new-password">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="edit-year" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block; font-weight: 500;">Year of Study</label>
+                    <input type="number" id="edit-year" class="premium-input" min="1" max="5">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="edit-password" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.3rem; display: block; font-weight: 500;">New Password</label>
+                    <input type="password" id="edit-password" class="premium-input" placeholder="(Leave blank to keep current)" autocomplete="new-password">
+                </div>
+            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem; justify-content: flex-end;">
+                <button class="btn-primary" onclick="submitEdit()">Save</button>
+                <button class="btn-secondary" onclick="document.getElementById('editModal').style.display='none'">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function filterUsers() {
+    const input = document.getElementById('user-search').value.toUpperCase();
+    const rows = document.getElementsByClassName('user-row');
+    
+    for (let i = 0; i < rows.length; i++) {
+        const text = rows[i].textContent || rows[i].innerText;
+        if (text.toUpperCase().indexOf(input) > -1) {
+            rows[i].style.display = "";
+        } else {
+            rows[i].style.display = "none";
+        }
+    }
+}
+
+function openAddModal() {
+    document.getElementById('addModal').style.display = 'flex';
+}
+
+function openEditModal(id, name, matric, course, year, email) {
+    document.getElementById('edit-id').value = id;
+    document.getElementById('edit-name').value = name;
+    document.getElementById('edit-matric').value = matric;
+    document.getElementById('edit-course').value = course;
+    document.getElementById('edit-year').value = year;
+    document.getElementById('edit-email').value = email;
+    document.getElementById('edit-password').value = '';
+    document.getElementById('editModal').style.display = 'flex';
+}
+
+async function submitAdd() {
+    const data = {
+        name: document.getElementById('add-name').value,
+        username: document.getElementById('add-username').value,
+        email: document.getElementById('add-email').value,
+        matric_no: document.getElementById('add-matric').value,
+        course: document.getElementById('add-course').value,
+        year: document.getElementById('add-year').value,
+        password: document.getElementById('add-password').value,
+        group_name: '' // optional
+    };
+    
+    const res = await fetch('/api/admin/student/add', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    });
+    
+    const json = await res.json();
+    if(res.ok) {
+        alert(json.message);
+        location.reload();
+    } else {
+        alert(json.error);
+    }
+}
+
+async function submitEdit() {
+    const data = {
+        id: document.getElementById('edit-id').value,
+        name: document.getElementById('edit-name').value,
+        email: document.getElementById('edit-email').value,
+        matric_no: document.getElementById('edit-matric').value,
+        course: document.getElementById('edit-course').value,
+        year: document.getElementById('edit-year').value,
+        password: document.getElementById('edit-password').value
+    };
+    
+    const res = await fetch('/api/admin/student/edit', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    });
+    
+    const json = await res.json();
+    if(res.ok) {
+        alert(json.message);
+        location.reload();
+    } else {
+        alert(json.error);
+    }
+}
+
+async function deleteStudent(id) {
+    if(confirm("Are you sure? This will delete the student and all their saved timetables.")) {
+        const res = await fetch('/api/admin/student/delete/' + id, {
+            method: 'DELETE'
+        });
+        const json = await res.json();
+        if(res.ok) {
+            alert(json.message);
+            location.reload();
+        } else {
+            alert(json.error);
+        }
+    }
+}
+</script>
+{% endblock %}

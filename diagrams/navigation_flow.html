@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Navigation Flow Diagrams</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    body { 
+      background: white; 
+      font-family: 'Inter', sans-serif; 
+      padding: 40px; 
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 60px;
+    }
+    h2 {
+      margin-bottom: 10px;
+      font-size: 20px;
+      text-align: center;
+    }
+    .diagram-container {
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="diagram-container">
+    <h2>Student Navigation Flow</h2>
+    <div class="mermaid">
+      flowchart TD
+          Login[Login Page] --> Dashboard[Student Dashboard]
+          Dashboard --> Gen[Generate Timetable]
+          Gen --> View[View Results]
+          View --> Save[Save Timetable]
+          Save --> Primary[Set as Primary]
+          
+          Dashboard --> Social[Social & Friends]
+          Social --> Add[Add / Remove Friends]
+          Add --> Compare[Compare Timetables]
+          
+          Dashboard --> Classmates[Classmates List]
+          Dashboard --> Lecturers[Lecturer Directory]
+          Dashboard --> Analytics[View Analytics]
+          Dashboard --> Logout[Logout]
+    </div>
+  </div>
+
+  <div class="diagram-container">
+    <h2>Admin Navigation Flow</h2>
+    <div class="mermaid">
+      flowchart TD
+          Login[Login Page] --> AdminDash[Admin Dashboard]
+          AdminDash --> Upload[Upload PDF]
+          Upload --> Monitor[Monitor Extraction Progress]
+          
+          AdminDash --> MngTT[Edit / Delete Timetable Records]
+          AdminDash --> MngStu[Manage Students]
+          MngStu --> StuOps[Add / Edit / Delete Student]
+          
+          AdminDash --> MngLec[Manage Lecturers]
+          MngLec --> LecOps[Add / Edit / Delete / Sync Profile]
+          
+          AdminDash --> Logout[Logout]
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        background: '#ffffff',
+        primaryColor: '#ffffff',
+        primaryTextColor: '#000000',
+        primaryBorderColor: '#000000',
+        lineColor: '#000000',
+        fontFamily: 'Inter, sans-serif'
+      }
+    });
+  </script>
+</body>
+</html>

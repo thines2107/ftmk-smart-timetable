@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>4.2.3.1 Conceptual and Logical Database Design</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Mono:wght@400;500&display=swap');
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #fff;
+      font-family: 'Inter', sans-serif;
+      color: #000;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* ── Cover / Header ─────────────────── */
+    .cover {
+      padding: 60px 52px 40px;
+      page-break-after: always;
+      text-align: center;
+    }
+    .cover .badge {
+      border: 1.5px solid #000;
+      border-radius: 40px;
+      display: inline-block;
+      padding: 4px 18px;
+      font-size: 10.5px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 28px;
+    }
+    .cover h1 {
+      font-size: 30px;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 12px;
+    }
+    .cover p {
+      font-size: 13px;
+      color: #444;
+      max-width: 540px;
+      margin: 0 auto 40px;
+    }
+    .cover-meta {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .cover-meta .box {
+      border: 1.5px solid #000;
+      border-radius: 8px;
+      padding: 12px 22px;
+      text-align: left;
+      min-width: 130px;
+    }
+    .cover-meta .box .lbl { font-size: 9.5px; text-transform: uppercase; letter-spacing: 1px; color: #555; margin-bottom: 3px; }
+    .cover-meta .box .val { font-size: 13.5px; font-weight: 700; }
+
+    /* ── Page ────────────────────────────── */
+    .page {
+      padding: 44px 52px;
+      page-break-after: always;
+    }
+    .page:last-child { page-break-after: auto; }
+
+    /* ── Section header ─────────────────── */
+    .sec-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #000;
+    }
+    .sec-num {
+      background: #000;
+      color: #fff;
+      font-size: 11.5px;
+      font-weight: 700;
+      border-radius: 6px;
+      padding: 3px 12px;
+    }
+    .sec-title { font-size: 19px; font-weight: 700; }
+    .sec-sub { font-size: 11.5px; color: #555; margin-top: 2px; }
+
+    /* ── ER Diagram wrapper ──────────────── */
+    .mermaid-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0 20px;
+    }
+    .mermaid { width: 100%; }
+
+    /* ── Table label ────────────────────── */
+    .tbl-label {
+      background: #000;
+      color: #fff;
+      font-family: 'Fira Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 5px 5px 0 0;
+    }
+    .tbl-desc {
+      font-size: 12px;
+      color: #444;
+      margin-bottom: 10px;
+      margin-top: 4px;
+    }
+
+    /* ── Data table ─────────────────────── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+      border-radius: 0 6px 6px 6px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.10);
+    }
+    thead tr { background: #000; color: #fff; }
+    thead th {
+      padding: 9px 13px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    tbody tr { background: #fff; }
+    tbody tr:nth-child(even) { background: #f5f5f5; }
+    tbody td {
+      padding: 8px 13px;
+      border-bottom: 1px solid #ddd;
+      font-size: 11.5px;
+      vertical-align: top;
+    }
+    tbody tr:last-child td { border-bottom: none; }
+
+    .mono { font-family: 'Fira Mono', monospace; font-size: 11px; }
+    .eg   { font-style: italic; color: #333; }
+
+    /* ── Normalization ──────────────────── */
+    .norm-block {
+      border: 1.5px solid #000;
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin-bottom: 22px;
+    }
+    .norm-block h4 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 6px;
+    }
+    .norm-block p, .norm-block ul { font-size: 12.5px; color: #222; }
+    .norm-block ul { padding-left: 20px; margin-top: 6px; }
+    .norm-block ul li { margin-bottom: 4px; }
+
+    .relation-table thead tr { background: #000; }
+
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════ -->
+<!-- COVER                                  -->
+<!-- ══════════════════════════════════════ -->
+<div class="cover">
+  <div class="badge">Section 4.2.3.1 &nbsp;|&nbsp; Conceptual &amp; Logical Database Design</div>
+  <h1>Entity Relationship Diagram,<br>Data Dictionary &amp; Normalization</h1>
+  <p>FTMK Smart Timetable Arrangement System &mdash; complete logical data model documenting all 5 core entities, their attributes, relationships, and normalisation to 3NF.</p>
+  <div class="cover-meta">
+    <div class="box"><div class="lbl">Institution</div><div class="val">UTEM</div></div>
+    <div class="box"><div class="lbl">Faculty</div><div class="val">FTMK</div></div>
+    <div class="box"><div class="lbl">Entities</div><div class="val">5 Tables</div></div>
+    <div class="box"><div class="lbl">Normal Form</div><div class="val">3NF</div></div>
+    <div class="box"><div class="lbl">Course</div><div class="val">BITU 3973</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- PAGE 1 — ER DIAGRAM                   -->
+<!-- ══════════════════════════════════════ -->
+<div class="page">
+  <div class="sec-header">
+    <span class="sec-num">1</span>
+    <div>
+      <div class="sec-title">Entity Relationship (ER) Diagram</div>
+      <div class="sec-sub">Crow's Foot notation — showing all entities, attributes, and cardinalities</div>
+    </div>
+  </div>
+
+  <p style="font-size:12.5px;color:#333;margin-bottom:18px;line-height:1.8;">
+    The ER diagram below models the five core entities in the system. A <strong>User</strong> can save multiple timetables and add multiple friends. The <strong>Timetable</strong> master records are populated by the admin via PDF upload. <strong>LecturerProfile</strong> data is scraped from the FTMK staff directory and linked to timetable records at runtime via fuzzy name matching.
+  </p>
+
+  <div class="mermaid-wrap">
+    <div class="mermaid">
+erDiagram
+    users {
+        int id PK
+        string name
+        string email UK
+        string password_hash
+        string role
+        string username UK
+        string matric_no UK
+        string year
+        string course
+        string group_name
+    }
+
+    timetable {
+        int id PK
+        string course_code
+        string semester
+        string group_name
+        string subject_code
+        string subject_name
+        string class_type
+        string day
+        time start_time
+        time end_time
+        string room
+        string lecturer_name
+    }
+
+    saved_timetables {
+        int id PK
+        int user_id FK
+        string name
+        text data
+        boolean is_primary
+        datetime created_at
+    }
+
+    saved_friends {
+        int id PK
+        int user_id FK
+        string friend_matric
+        string friend_name
+        datetime created_at
+    }
+
+    lecturer_profiles {
+        int id PK
+        string name UK
+        string title
+        string email
+        string department
+        string block
+        string office_room
+    }
+
+    users ||--o{ saved_timetables : "has"
+    users ||--o{ saved_friends : "adds"
+    timetable }o..o| lecturer_profiles : "matched by name at runtime"
+    </div>
+  </div>
+
+  <p style="font-size:11.5px;color:#555;margin-top:10px;text-align:center;">
+    <strong>PK</strong> = Primary Key &nbsp;&nbsp; <strong>FK</strong> = Foreign Key &nbsp;&nbsp; <strong>UK</strong> = Unique Key &nbsp;&nbsp; <code>..</code> = Logical / Non-enforced relationship (fuzzy match)
+  </p>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- PAGE 2 — DATA DICTIONARY: users       -->
+<!-- ══════════════════════════════════════ -->
+<div class="page">
+  <div class="sec-header">
+    <span class="sec-num">2</span>
+    <div>
+      <div class="sec-title">Data Dictionary</div>
+      <div class="sec-sub">Detailed description of all entity attributes</div>
+    </div>
+  </div>
+
+  <span class="tbl-label">users</span>
+  <p class="tbl-desc">Stores all registered system users — administrators and students — with their authentication credentials and academic profile data.</p>
+  <table>
+    <thead>
+      <tr><th>Data Element</th><th>Description</th><th>Data Type</th><th>Size</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="mono">id</td><td>Unique auto-incremented identifier for each user.</td><td class="mono">INTEGER</td><td class="mono">—</td><td class="eg">1, 2, 3</td></tr>
+      <tr><td class="mono">name</td><td>Full name of the user as entered during registration.</td><td class="mono">VARCHAR</td><td class="mono">100</td><td class="eg">Ahmad Syahmi bin Ali</td></tr>
+      <tr><td class="mono">email</td><td>Unique email address used for account identification.</td><td class="mono">VARCHAR</td><td class="mono">120</td><td class="eg">B032210001@student.utem.edu.my</td></tr>
+      <tr><td class="mono">password_hash</td><td>Hashed password using Werkzeug scrypt algorithm. Plain text is never stored.</td><td class="mono">VARCHAR</td><td class="mono">256</td><td class="eg">scrypt:32768:8:1$...</td></tr>
+      <tr><td class="mono">role</td><td>Defines whether the account is a student or admin. Controls portal access.</td><td class="mono">VARCHAR</td><td class="mono">20</td><td class="eg">student, admin</td></tr>
+      <tr><td class="mono">username</td><td>Unique login username chosen during registration.</td><td class="mono">VARCHAR</td><td class="mono">50</td><td class="eg">syahmi2024</td></tr>
+      <tr><td class="mono">matric_no</td><td>Student's matriculation number. Used in social features.</td><td class="mono">VARCHAR</td><td class="mono">50</td><td class="eg">B032210001</td></tr>
+      <tr><td class="mono">year</td><td>Student's current year of study.</td><td class="mono">VARCHAR</td><td class="mono">20</td><td class="eg">Year 3</td></tr>
+      <tr><td class="mono">course</td><td>Student's programme code.</td><td class="mono">VARCHAR</td><td class="mono">50</td><td class="eg">BITA, BITC, BITP</td></tr>
+      <tr><td class="mono">group_name</td><td>Student's assigned class group for classmate matching.</td><td class="mono">VARCHAR</td><td class="mono">50</td><td class="eg">S1G1, S2G3</td></tr>
+    </tbody>
+  </table>
+
+  <span class="tbl-label">saved_friends</span>
+  <p class="tbl-desc">Stores a directed social link from one student to another, identified by matric number. Used for timetable comparison.</p>
+  <table>
+    <thead>
+      <tr><th>Data Element</th><th>Description</th><th>Data Type</th><th>Size</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="mono">id</td><td>Unique identifier for each friend link record.</td><td class="mono">INTEGER</td><td class="mono">—</td><td class="eg">1, 5, 8</td></tr>
+      <tr><td class="mono">user_id</td><td>Foreign key referencing the student who added this friend.</td><td class="mono">INTEGER</td><td class="mono">—</td><td class="eg">3</td></tr>
+      <tr><td class="mono">friend_matric</td><td>Matric number of the added friend, used to retrieve their primary timetable.</td><td class="mono">VARCHAR</td><td class="mono">50</td><td class="eg">B032210045</td></tr>
+      <tr><td class="mono">friend_name</td><td>Full name of the friend at the time they were added. Stored for display.</td><td class="mono">VARCHAR</td><td class="mono">100</td><td class="eg">Nurul Ain binti Razak</td></tr>
+      <tr><td class="mono">created_at</td><td>Timestamp recording when the friendship link was created.</td><td class="mono">DATETIME</td><td class="mono">—</td><td class="eg">2025-06-10 09:15:00</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- PAGE 3 — DATA DICTIONARY: timetable   -->
+<!-- ══════════════════════════════════════ -->
+<div class="page">
+  <span class="tbl-label">timetable</span>
+  <p class="tbl-desc">Master timetable data extracted from faculty PDF uploads by the Admin. Each row is one class session for one subject group.</p>
+  <table>
+    <thead>
+      <tr><th>Data Element</th><th>Description</th><th>Data Type</th><th>Size</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="mono">id</td><td>Unique identifier for each timetable record.</td><td class="mono">INTEGER</td><td class="mono">—</td><td class="eg">1, 42, 305</td></tr>
+      <tr><td class="mono">course_code</td><td>Programme code this class session belongs to.</td><td class="mono">VARCHAR</td><td class="mono">50</td><td class="eg">BITA, BITC</td></tr>
+      <tr><td class="mono">semester</td><td>Academic session and semester label as extracted from PDF.</td><td class="mono">VARCHAR</td><td class="mono">50</td><td class="eg">Semester 2 2025/2026</td></tr>
+      <tr><td class="mono">group_name</td><td>Class group identifier — differentiates parallel groups of the same subject.</td><td class="mono">VARCHAR</td><td class="mono">50</td><td class="eg">S1G1, S2G3</td></tr>
+      <tr><td class="mono">subject_code</td><td>Subject code as defined by the faculty curriculum.</td><td class="mono">VARCHAR</td><td class="mono">50</td><td class="eg">BITP1123</td></tr>
+      <tr><td class="mono">subject_name</td><td>Full descriptive name of the subject.</td><td class="mono">VARCHAR</td><td class="mono">200</td><td class="eg">Programming Technique</td></tr>
+      <tr><td class="mono">class_type</td><td>Type of class session — Lecture or Laboratory.</td><td class="mono">VARCHAR</td><td class="mono">50</td><td class="eg">LEC, LAB</td></tr>
+      <tr><td class="mono">day</td><td>Day of the week the class is held.</td><td class="mono">VARCHAR</td><td class="mono">20</td><td class="eg">MONDAY, FRIDAY</td></tr>
+      <tr><td class="mono">start_time</td><td>Class start time in 24-hour format. Used for clash detection.</td><td class="mono">TIME</td><td class="mono">—</td><td class="eg">08:00:00</td></tr>
+      <tr><td class="mono">end_time</td><td>Class end time in 24-hour format. Used for clash detection.</td><td class="mono">TIME</td><td class="mono">—</td><td class="eg">10:00:00</td></tr>
+      <tr><td class="mono">room</td><td>Assigned classroom or laboratory room code.</td><td class="mono">VARCHAR</td><td class="mono">100</td><td class="eg">BK11, BR09</td></tr>
+      <tr><td class="mono">lecturer_name</td><td>Name of the assigned lecturer. Linked to lecturer_profiles via fuzzy matching at runtime.</td><td class="mono">VARCHAR</td><td class="mono">200</td><td class="eg">DR. AHMAD FADZIL BIN ISMAIL</td></tr>
+    </tbody>
+  </table>
+
+  <span class="tbl-label">saved_timetables</span>
+  <p class="tbl-desc">Stores timetable combinations that students have saved to their profile, including an is_primary flag.</p>
+  <table>
+    <thead>
+      <tr><th>Data Element</th><th>Description</th><th>Data Type</th><th>Size</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="mono">id</td><td>Unique identifier for each saved timetable record.</td><td class="mono">INTEGER</td><td class="mono">—</td><td class="eg">1, 5, 12</td></tr>
+      <tr><td class="mono">user_id</td><td>Foreign key referencing the student who saved this timetable.</td><td class="mono">INTEGER</td><td class="mono">—</td><td class="eg">3, 7</td></tr>
+      <tr><td class="mono">name</td><td>User-defined label for this saved timetable combination.</td><td class="mono">VARCHAR</td><td class="mono">100</td><td class="eg">My Sem 2 Timetable</td></tr>
+      <tr><td class="mono">data</td><td>Complete timetable combination stored as a JSON string — denormalised snapshot for integrity.</td><td class="mono">TEXT</td><td class="mono">—</td><td class="eg">[{"subject": "BITP1123", ...}]</td></tr>
+      <tr><td class="mono">is_primary</td><td>Flag indicating whether this is the student's active primary timetable.</td><td class="mono">BOOLEAN</td><td class="mono">—</td><td class="eg">True, False</td></tr>
+      <tr><td class="mono">created_at</td><td>Timestamp when this timetable was saved. Auto-set by the database.</td><td class="mono">DATETIME</td><td class="mono">—</td><td class="eg">2025-06-10 14:30:00</td></tr>
+    </tbody>
+  </table>
+
+  <span class="tbl-label">lecturer_profiles</span>
+  <p class="tbl-desc">Stores official lecturer profile data scraped from the FTMK staff directory. Linked to timetable records via fuzzy name matching (threshold &gt; 80%).</p>
+  <table>
+    <thead>
+      <tr><th>Data Element</th><th>Description</th><th>Data Type</th><th>Size</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="mono">id</td><td>Unique identifier for each lecturer profile record.</td><td class="mono">INTEGER</td><td class="mono">—</td><td class="eg">1, 10, 24</td></tr>
+      <tr><td class="mono">name</td><td>Full name of the lecturer as scraped from the staff directory. Used as the matching key.</td><td class="mono">VARCHAR</td><td class="mono">200</td><td class="eg">DR. AHMAD FADZIL BIN ISMAIL</td></tr>
+      <tr><td class="mono">title</td><td>Academic or professional title of the lecturer.</td><td class="mono">VARCHAR</td><td class="mono">100</td><td class="eg">Dr., Prof., Ts. Dr.</td></tr>
+      <tr><td class="mono">email</td><td>Official UTEM email address of the lecturer.</td><td class="mono">VARCHAR</td><td class="mono">120</td><td class="eg">fadzil@utem.edu.my</td></tr>
+      <tr><td class="mono">department</td><td>Department or centre within FTMK the lecturer belongs to.</td><td class="mono">VARCHAR</td><td class="mono">100</td><td class="eg">Dept. of Software Engineering</td></tr>
+      <tr><td class="mono">block</td><td>Building block where the lecturer's office is located.</td><td class="mono">VARCHAR</td><td class="mono">50</td><td class="eg">Block A, Block B</td></tr>
+      <tr><td class="mono">office_room</td><td>Specific room code of the lecturer's office.</td><td class="mono">VARCHAR</td><td class="mono">100</td><td class="eg">B1-17, B2-09</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- PAGE 4 — NORMALIZATION                -->
+<!-- ══════════════════════════════════════ -->
+<div class="page">
+  <div class="sec-header">
+    <span class="sec-num">3</span>
+    <div>
+      <div class="sec-title">Database Normalization</div>
+      <div class="sec-sub">Applied normalization rules from 1NF to 3NF</div>
+    </div>
+  </div>
+
+  <p style="font-size:12.5px;margin-bottom:20px;line-height:1.8;color:#222;">
+    Normalization is the process of organizing a relational database to reduce data redundancy and improve data integrity. The FTMK Smart Timetable Arrangement System database has been normalized to the <strong>Third Normal Form (3NF)</strong>. The following describes how each form has been applied.
+  </p>
+
+  <!-- 1NF -->
+  <div class="norm-block">
+    <h4>First Normal Form (1NF) — Atomic Values, No Repeating Groups</h4>
+    <p><strong>Rule:</strong> Each column must contain only atomic (indivisible) values. No repeating groups or arrays are allowed in a single column.</p>
+    <ul>
+      <li>Every attribute across all 5 tables holds a single, atomic value. For example, <code>start_time</code> and <code>end_time</code> are stored as separate TIME columns in the <code>timetable</code> table — not combined into one string.</li>
+      <li>Multiple class sessions for a subject are stored as separate rows in <code>timetable</code>, not as comma-separated values in one field.</li>
+      <li>A student who saves multiple timetables has multiple rows in <code>saved_timetables</code>, not one row with multiple values.</li>
+    </ul>
+    <p style="margin-top:8px;"><strong>Result:</strong> All tables satisfy 1NF. &check;</p>
+  </div>
+
+  <!-- 2NF -->
+  <div class="norm-block">
+    <h4>Second Normal Form (2NF) — No Partial Dependency</h4>
+    <p><strong>Rule:</strong> The table must be in 1NF, and all non-key attributes must be fully functionally dependent on the entire primary key (applies to composite keys).</p>
+    <ul>
+      <li>All tables in the system use a single-column surrogate primary key (<code>id</code>, SERIAL/AUTO_INCREMENT). Since there are no composite primary keys, partial dependencies cannot exist by definition.</li>
+      <li>For example, in <code>timetable</code>, all attributes (subject_name, day, start_time, room, etc.) are fully dependent on the single <code>id</code> primary key.</li>
+      <li>In <code>saved_timetables</code>, <code>name</code>, <code>data</code>, and <code>is_primary</code> are all fully dependent on <code>id</code>.</li>
+    </ul>
+    <p style="margin-top:8px;"><strong>Result:</strong> All tables satisfy 2NF. &check;</p>
+  </div>
+
+  <!-- 3NF -->
+  <div class="norm-block">
+    <h4>Third Normal Form (3NF) — No Transitive Dependency</h4>
+    <p><strong>Rule:</strong> The table must be in 2NF, and no non-key attribute may depend on another non-key attribute (no transitive dependencies).</p>
+    <ul>
+      <li>Lecturer details (email, department, block, office_room) are stored in the separate <code>lecturer_profiles</code> table rather than repeating them in every row of the <code>timetable</code> table. This eliminates the transitive dependency: <code>id → lecturer_name → email/department/office</code>.</li>
+      <li>Student academic profile information (year, course, group_name) belongs to the <code>users</code> table and is not repeated in <code>saved_timetables</code>. The foreign key <code>user_id</code> is used to join when needed.</li>
+      <li>Friend names are stored in <code>saved_friends.friend_name</code> as a snapshot at the time of adding, intentionally decoupled from <code>users.name</code> to avoid dependency on a non-key attribute of another table.</li>
+    </ul>
+    <p style="margin-top:8px;"><strong>Result:</strong> All tables satisfy 3NF. &check;</p>
+  </div>
+
+  <!-- Intentional deviation note -->
+  <div class="norm-block">
+    <h4>Note — Intentional Denormalization in saved_timetables.data</h4>
+    <p>The <code>data</code> column in <code>saved_timetables</code> stores a complete JSON snapshot of the student's chosen timetable combination. This is a deliberate and justified deviation from strict normalization:</p>
+    <ul>
+      <li>If timetable master records are later updated or deleted by the admin, the student's saved choice must remain intact and unchanged.</li>
+      <li>Storing a JSON snapshot ensures <strong>historical data integrity</strong> — the saved timetable always reflects what the student chose, regardless of future changes to the master <code>timetable</code> table.</li>
+      <li>This pattern is widely accepted in production systems as a deliberate denormalization for audit and snapshot purposes.</li>
+    </ul>
+  </div>
+
+  <!-- Summary Table -->
+  <table class="relation-table" style="margin-top:10px;">
+    <thead>
+      <tr>
+        <th>Table</th>
+        <th>1NF</th>
+        <th>2NF</th>
+        <th>3NF</th>
+        <th>Remarks</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="mono">users</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>Fully normalized</td></tr>
+      <tr><td class="mono">timetable</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>Lecturer info separated to lecturer_profiles</td></tr>
+      <tr><td class="mono">saved_timetables</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;*</td><td>data column is intentional snapshot (denormalized)</td></tr>
+      <tr><td class="mono">saved_friends</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>Fully normalized</td></tr>
+      <tr><td class="mono">lecturer_profiles</td><td>&#10003;</td><td>&#10003;</td><td>&#10003;</td><td>Fully normalized</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:11px;color:#555;margin-top:8px;">* Intentional justified deviation — see note above.</p>
+</div>
+
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      background: '#ffffff',
+      primaryColor: '#ffffff',
+      primaryTextColor: '#000000',
+      primaryBorderColor: '#000000',
+      lineColor: '#000000',
+      fontFamily: 'Inter, sans-serif',
+      fontSize: '13px'
+    }
+  });
+</script>
+</body>
+</html>

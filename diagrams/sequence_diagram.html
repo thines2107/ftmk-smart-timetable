@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Interaction (Sequence) Diagram</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    body { background: white; font-family: 'Inter', sans-serif; padding: 40px; text-align: center; }
+    .mermaid { display: flex; justify-content: center; }
+  </style>
+</head>
+<body>
+  <h2>Interaction Diagram: Generate Timetable</h2>
+  <div class="mermaid">
+sequenceDiagram
+    actor Student
+    participant UI as Web Browser
+    participant Routes as Application Logic
+    participant DB as Database
+    participant Gen as Genetic Algorithm
+
+    Student->>UI: Select subjects and preferences
+    Student->>UI: Click "Generate"
+    UI->>Routes: POST /api/generate
+    Routes->>DB: Query timetable data for selected subjects
+    DB-->>Routes: Return Timetable Records
+    Routes->>Gen: generate_combinations(data, preferences)
+    
+    rect rgb(240, 240, 240)
+        note right of Gen: Algorithmic Process
+        Gen->>Gen: Group records by subject
+        Gen->>Gen: Calculate Cartesian combinations
+        Gen->>Gen: Filter by preferences (No Night/Morning)
+        Gen->>Gen: Filter clashes (start/end overlap)
+        Gen->>Gen: Calculate optimization gap score
+        Gen->>Gen: Sort options by lowest gap score
+    end
+
+    Gen-->>Routes: Return conflict-free combinations
+    Routes-->>UI: JSON Response (Timetable options)
+    UI-->>Student: Render interactive weekly grid
+  </div>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        background: '#ffffff',
+        primaryColor: '#ffffff',
+        primaryTextColor: '#000000',
+        primaryBorderColor: '#000000',
+        lineColor: '#000000',
+        fontFamily: 'Inter, sans-serif'
+      }
+    });
+  </script>
+</body>
+</html>

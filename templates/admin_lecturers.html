@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="header-section">
+    <h1>Lecturer Workload Dashboard</h1>
+    <p>View total teaching hours and subjects for all registered lecturers based on Timetable.</p>
+</div>
+
+<div class="glass-card mt-2">
+    <div class="card-header" style="display: flex; flex-direction: column; align-items: flex-start; gap: 1rem;">
+        <h2>Teaching Workloads</h2>
+        <div class="filters" style="display: flex; flex-wrap: wrap; gap: 1rem; width: 100%; align-items: center;">
+        <div class="form-group" style="margin-bottom: 0; flex-grow: 1;">
+            <div style="position: relative;">
+                <i class='bx bx-search' style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font-size: 1.5rem; color: var(--text-muted);"></i>
+                <input type="text" id="filter-lecturer" autocomplete="off" name="workload_search" class="form-control" style="width: 100%; max-width: 400px; padding: 1rem 1.5rem 1rem 3.5rem; font-size: 1.1rem; border: 2px solid var(--surface-border); border-radius: 8px; background: var(--input-bg); color: var(--text-main);" placeholder="Search Lecturer Workload..." onkeyup="filterLecturers()">
+            </div>
+        </div>
+        </div>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="premium-table admin-table" id="workload-table">
+            <thead>
+                <tr>
+                    <th>Lecturer Name</th>
+                    <th>Subjects Taught</th>
+                    <th style="text-align: center;">Total Classes</th>
+                    <th style="text-align: center;">Total Hours</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for name, w in workload.items() %}
+                <tr class="lecturer-row">
+                    <td class="lecturer-name" style="font-weight: 600;">{{ name }}</td>
+                    <td>
+                        <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.25rem;">
+                            {% for subj in w.subjects %}
+                            <li style="font-size: 0.85rem; background: var(--surface-opaque); padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-block; width: max-content;">{{ subj }}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td style="text-align: center; font-weight: bold; color: var(--primary);">{{ w.total_classes }}</td>
+                    <td style="text-align: center; font-weight: bold; color: var(--secondary);">{{ w.total_hours }} hrs</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if not workload %}
+    <p style="color: var(--text-muted); padding: 1rem 0;">No lecturer workload data found. Please upload a Timetable PDF.</p>
+    {% endif %}
+</div>
+
+<script>
+function filterLecturers() {
+    const input = document.getElementById('filter-lecturer').value.toUpperCase();
+    const rows = document.getElementsByClassName('lecturer-row');
+    for (let i = 0; i < rows.length; i++) {
+        const nameElement = rows[i].querySelector('.lecturer-name');
+        if (nameElement && (nameElement.textContent || nameElement.innerText).toUpperCase().indexOf(input) > -1) {
+            rows[i].style.display = "";
+        } else {
+            rows[i].style.display = "none";
+        }
+    }
+}
+</script>
+{% endblock %}

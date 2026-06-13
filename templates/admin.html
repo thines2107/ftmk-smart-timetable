@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="header-section">
+    <h1>Admin Portal</h1>
+    <p>Upload Timetable PDFs & Manage Database</p>
+</div>
+
+
+
+<div class="dashboard-grid">
+    <div class="glass-card upload-section">
+        <h2>Upload New Timetable PDF</h2>
+        <form id="upload-form" class="upload-form">
+            <div style="margin-bottom: 2rem;">
+                <label for="semester-name" style="display: block; margin-bottom: 0.8rem; font-weight: 600; color: var(--secondary); font-size: 1.1rem;">
+                    Please enter the Semester Reference Name for this timetable:
+                </label>
+                <input type="text" id="semester-name" value="" class="form-control" placeholder="Enter Sem Name..." required style="padding: 1rem 1.5rem; font-size: 1.2rem; border-radius: 8px; border: 2px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%;">
+            </div>
+            <div class="file-drop-area" id="file-drop-area">
+                <i class='bx bxs-file-pdf'></i>
+                <span class="file-msg">Drag & Drop PDF here or Click to Browse</span>
+                <input type="file" id="pdf-file" accept=".pdf" class="file-input">
+            </div>
+            <button type="button" class="btn-primary" onclick="uploadPDF()">Extract & Save <i class='bx bx-loader-alt bx-spin hidden' id="upload-loader"></i></button>
+        </form>
+        <div id="upload-status" class="status-msg"></div>
+        <div id="progress-container" class="progress-container hidden">
+            <div class="progress-info">
+                <span id="progress-text">0%</span>
+                <span id="progress-detail">Preparing...</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div id="progress-bar-fill" class="progress-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="glass-card mt-2">
+    <div class="card-header" style="display: flex; flex-direction: column; align-items: flex-start; gap: 1rem;">
+        <h2>Database Records by Sem</h2>
+        <div class="filters" style="display: flex; flex-wrap: wrap; gap: 1rem; width: 100%; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 500; cursor: pointer; background: rgba(255,255,255,0.05); padding: 0.5rem 1rem; border-radius: 8px;">
+                <input type="checkbox" id="master-select-all" onclick="toggleMasterSelectAll(this)" style="width: 18px; height: 18px; cursor: pointer;">
+                <label for="master-select-all" style="cursor: pointer; margin:0;">Select All Data</label>
+            </div>
+            <button type="button" class="btn-primary" style="background-color: var(--error); margin-right: auto;" onclick="deleteSelected()">
+                Delete Selected <i class='bx bx-trash'></i>
+            </button>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                <input type="text" id="filter-course" class="form-control" style="width: 120px;" placeholder="Course..." onkeyup="filterTables()">
+                <input type="text" id="filter-subject" class="form-control" style="width: 150px;" placeholder="Subject..." onkeyup="filterTables()">
+                <input type="text" id="filter-lecturer" class="form-control" style="width: 150px;" placeholder="Lecturer..." onkeyup="filterTables()">
+                <input type="text" id="filter-day" class="form-control" style="width: 100px;" placeholder="Day..." onkeyup="filterTables()">
+            </div>
+        </div>
+    </div>
+    
+    <div id="course-tables-container">
+        {% for semester, courses in grouped_records.items() %}
+        {% set s_idx = loop.index %}
+        <div class="semester-section" data-semester="{{ semester|upper }}">
+            <h2 class="semester-header" onclick="toggleSemester('{{ s_idx }}')" style="cursor: pointer; padding: 1rem; background: var(--primary); color: white; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+                {{ semester }}
+                <i class='bx bx-chevron-down' id="sem-icon-{{ s_idx }}"></i>
+            </h2>
+            <div class="semester-content" id="sem-{{ s_idx }}">
+                {% for course, records in courses.items() %}
+                {% set c_idx = s_idx ~ '-' ~ loop.index %}
+                {% set ns = namespace(has_error=false) %}
+                {% for r in records %}
+                    {% if not r.subject_code or 'UNKNOWN' in r.subject_code|upper or not r.subject_name or 'UNKNOWN' in r.subject_name|upper or not r.class_type or 'UNKNOWN' in r.class_type|upper or not r.day or 'UNKNOWN' in r.day|upper or not r.start_time or not r.group_name or 'UNKNOWN' in r.group_name|upper or not r.room or 'UNKNOWN' in r.room|upper or not r.lecturer_name or 'UNKNOWN' in r.lecturer_name|upper %}
+                        {% set ns.has_error = true %}
+                    {% endif %}
+                {% endfor %}
+                <div class="course-section" data-course="{{ course|upper }}">
+                    <h3 class="course-header {{ 'alert-danger' if ns.has_error else '' }}" onclick="toggleCourse('{{ c_idx }}')" style="cursor: pointer; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; {{ 'border: 1px solid rgba(239, 68, 68, 0.5);' if ns.has_error else '' }}">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
+                            Course: {{ course }}
+                            {% if ns.has_error %}
+                                <span class="error-badge" style="background: #ef4444; color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; box-shadow: 0 0 10px rgba(239,68,68,0.5);">⚠️ Errors Detected</span>
+                            {% endif %}
+                        </div>
+                        <i class='bx bx-chevron-down' id="icon-{{ c_idx }}"></i>
+                    </h3>
+                    <div class="table-responsive hidden" id="table-{{ c_idx }}">
+                        <table class="premium-table admin-table" data-course="{{ course|upper }}">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" class="select-all-cb" onclick="toggleSelectAll(this, '{{ c_idx }}')"></th>
+                                    <th>Subj Code</th>
+                                    <th>Subj Name</th>
+                                    <th>Type</th>
+                                    <th>Day</th>
+                                    <th>Time</th>
+                                    <th>Group</th>
+                                    <th>Room</th>
+                                    <th>Lecturer</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for r in records %}
+                                <tr id="row-{{ r.id }}">
+                                    <td><input type="checkbox" class="record-cb course-{{ c_idx }}" value="{{ r.id }}"></td>
+                                    <td class="{{ 'alert-danger' if not r.subject_code or 'UNKNOWN' in r.subject_code|upper else '' }}" data-field="subject_code">{{ r.subject_code or '' }}</td>
+                                    <td class="{{ 'alert-danger' if not r.subject_name or 'UNKNOWN' in r.subject_name|upper else '' }}" data-field="subject_name">{{ r.subject_name or '' }}</td>
+                                    <td class="{{ 'alert-danger' if not r.class_type or 'UNKNOWN' in r.class_type|upper else '' }}" data-field="class_type">{{ r.class_type or '' }}</td>
+                                    <td class="{{ 'alert-danger' if not r.day or 'UNKNOWN' in r.day|upper else '' }}" data-field="day">{{ r.day or '' }}</td>
+                                    <td class="{{ 'alert-danger' if not r.start_time else '' }}" data-field="time" data-start="{{ r.start_time.strftime('%H:%M') if r.start_time else '' }}" data-end="{{ r.end_time.strftime('%H:%M') if r.end_time else '' }}">{{ r.start_time.strftime('%H:%M') if r.start_time else '' }} - {{ r.end_time.strftime('%H:%M') if r.end_time else '' }}</td>
+                                    <td class="{{ 'alert-danger' if not r.group_name or 'UNKNOWN' in r.group_name|upper else '' }}" data-field="group_name">{{ r.group_name or '' }}</td>
+                                    <td class="{{ 'alert-danger' if not r.room or 'UNKNOWN' in r.room|upper else '' }}" data-field="room">{{ r.room or '' }}</td>
+                                    <td class="{{ 'alert-danger' if not r.lecturer_name or 'UNKNOWN' in r.lecturer_name|upper else '' }}" data-field="lecturer_name">{{ r.lecturer_name or '' }}</td>
+                                    <td>
+                                        <button class="btn-primary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="editRow(this, {{ r.id }})">Edit</button>
+                                    </td>
+                                </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        
+        {% if not grouped_records %}
+        <p style="color: var(--text-muted); padding: 1rem 0;">No records found. Upload a PDF to begin.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

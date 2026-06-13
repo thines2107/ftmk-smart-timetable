@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Activity Diagram – Manual Timetable Selection (Existing Process)</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #ffffff;
+      font-family: 'Inter', sans-serif;
+      color: #1a1a2e;
+      padding: 40px;
+    }
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: #1e3a5f;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 36px;
+    }
+    .diagram-container {
+      max-width: 780px;
+      margin: 0 auto;
+      background: #f8fafd;
+      border: 1px solid #dde4ef;
+      border-radius: 12px;
+      padding: 36px 32px;
+    }
+    .mermaid { display: flex; justify-content: center; }
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 11px;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <h1>Activity Diagram: Manual Timetable Selection Process</h1>
+  <p class="subtitle">Existing Process &nbsp;|&nbsp; FTMK Smart Timetable Arrangement System</p>
+
+  <div class="diagram-container">
+    <div class="mermaid">
+flowchart TD
+    A([Start]) --> B["Download Official Timetable PDF\nfrom Faculty Portal"]
+    B --> C["Identify Subjects to Register\nfor the Semester"]
+    C --> D["Manually Locate Time Slots\nfor Each Subject and Group Option\nin the PDF"]
+    D --> E["Compare Time Slots Across\nAll Selected Subjects"]
+    E --> F{Any Time\nConflict Found?}
+
+    F -- Yes --> G["Adjust Group Selection"]
+    G --> E
+
+    F -- No --> H["Record Selected Timetable\nCombination Manually"]
+    H --> I["Proceed with\nCourse Registration"]
+    I --> J{Conflict Discovered\nAfter Registration?}
+
+    J -- Yes --> K["Request Section Change\nor Drop Subject"]
+    K --> D
+
+    J -- No --> L([End: Schedule Confirmed])
+
+    %% Styling
+    style A fill:#1e3a5f,color:#fff,stroke:none,rx:20
+    style L fill:#166534,color:#fff,stroke:none,rx:20
+
+    style B fill:#e0f2fe,color:#0c4a6e,stroke:#38bdf8,stroke-width:1.5px
+    style C fill:#e0f2fe,color:#0c4a6e,stroke:#38bdf8,stroke-width:1.5px
+    style D fill:#fef9c3,color:#713f12,stroke:#fbbf24,stroke-width:1.5px
+    style E fill:#fef9c3,color:#713f12,stroke:#fbbf24,stroke-width:1.5px
+    style H fill:#dcfce7,color:#14532d,stroke:#4ade80,stroke-width:1.5px
+    style I fill:#dcfce7,color:#14532d,stroke:#4ade80,stroke-width:1.5px
+
+    style F fill:#fff,color:#1e3a5f,stroke:#6366f1,stroke-width:2px
+    style J fill:#fff,color:#1e3a5f,stroke:#6366f1,stroke-width:2px
+
+    style G fill:#fee2e2,color:#7f1d1d,stroke:#f87171,stroke-width:1.5px
+    style K fill:#fee2e2,color:#7f1d1d,stroke:#f87171,stroke-width:1.5px
+
+    linkStyle 2 stroke:#fbbf24,stroke-width:2px
+    linkStyle 3 stroke:#fbbf24,stroke-width:2px
+    linkStyle 4 stroke:#6366f1,stroke-width:2px
+    linkStyle 5 stroke:#f87171,stroke-width:2px,stroke-dasharray:5
+    linkStyle 6 stroke:#f87171,stroke-width:2px
+    linkStyle 7 stroke:#4ade80,stroke-width:2px
+    linkStyle 8 stroke:#4ade80,stroke-width:2px
+    linkStyle 9 stroke:#6366f1,stroke-width:2px
+    linkStyle 10 stroke:#f87171,stroke-width:2px,stroke-dasharray:5
+    linkStyle 11 stroke:#4ade80,stroke-width:2px
+    </div>
+  </div>
+
+  <p class="footer">BITU 3973 Final Year Project I &nbsp;|&nbsp; FTMK, UTEM &nbsp;|&nbsp; Existing Manual Process</p>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        background: '#f8fafd',
+        primaryColor: '#e0f2fe',
+        primaryTextColor: '#1e3a5f',
+        primaryBorderColor: '#93c5fd',
+        lineColor: '#374151',
+        secondaryColor: '#dcfce7',
+        tertiaryColor: '#fef9c3',
+        fontFamily: 'Inter, sans-serif',
+        fontSize: '14px',
+        edgeLabelBackground: '#ffffff'
+      },
+      flowchart: { curve: 'basis', padding: 24, nodeSpacing: 50, rankSpacing: 60 }
+    });
+  </script>
+</body>
+</html>

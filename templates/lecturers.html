@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="header-section" style="text-align: left; margin-bottom: 2rem;">
+    <h1 style="margin-top: 0;">Lecturer Directory</h1>
+    <p>Find lecturers and view the subjects they are teaching this semester.</p>
+</div>
+
+<div class="glass-card" style="margin-bottom: 2rem;">
+    <div class="form-group" style="margin-bottom: 0;">
+        <label for="lecturer-search" style="font-size: 1.1rem; font-weight: 600; color: var(--secondary);">Search Lecturer</label>
+        <div style="position: relative;">
+            <i class='bx bx-search' style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font-size: 1.5rem; color: var(--text-muted);"></i>
+            <input type="text" id="lecturer-search" class="form-control" style="width: 100%; padding: 1rem 1.5rem 1rem 3.5rem; font-size: 1.1rem; border: 2px solid var(--surface-border); border-radius: 8px; background: var(--input-bg); color: var(--text-main);" placeholder="Type a lecturer's name..." onkeyup="filterLecturers()">
+        </div>
+    </div>
+</div>
+
+<div class="subject-tile-grid" id="lecturer-grid" style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));">
+    {% for name, info in lecturers.items() %}
+    <div class="lecturer-card tile-content" style="cursor: default;">
+        <div style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--surface-border);">
+            <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--gradient-1); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i class='bx bxs-user' style="font-size: 1.5rem; color: var(--primary);"></i>
+            </div>
+            <div style="flex-grow: 1;">
+                <h3 class="lecturer-name" style="margin: 0 0 0.25rem 0; font-size: 1.1rem; color: var(--text-main); line-height: 1.3;">{{ name }}</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+                    <span style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">{{ info.subjects|length }} Subject(s)</span>
+                    {% if info.profile %}
+                        <span style="font-size: 0.8rem; background: rgba(59, 130, 246, 0.1); color: var(--secondary); padding: 0.1rem 0.4rem; border-radius: 4px;">{{ info.profile.department }}</span>
+                    {% endif %}
+                </div>
+                {% if info.profile %}
+                <div style="display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.85rem; color: var(--text-muted);">
+                    {% if info.profile.email %}
+                    <a href="mailto:{{ info.profile.email }}" style="display: flex; align-items: center; gap: 0.3rem; color: var(--secondary); text-decoration: none;"><i class='bx bx-envelope'></i> {{ info.profile.email }}</a>
+                    {% endif %}
+                    {% if info.profile.office_room %}
+                    <span style="display: flex; align-items: center; gap: 0.3rem;"><i class='bx bx-door-open'></i> Room: {{ info.profile.block }} - {{ info.profile.office_room }}</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+            <h4 style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Teaching:</h4>
+            <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem;">
+                {% for subj in info.subjects %}
+                <li style="font-size: 0.9rem; color: var(--text-main); background: var(--surface-opaque); padding: 0.5rem 0.75rem; border-radius: 6px; border: 1px solid var(--surface-border); display: flex; align-items: flex-start; gap: 0.5rem;">
+                    <i class='bx bx-book-bookmark' style="color: var(--secondary); margin-top: 0.1rem;"></i>
+                    <span style="line-height: 1.3;">{{ subj }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% if info.schedule %}
+        <div style="margin-top: 0.5rem;">
+            <button onclick="toggleSchedule(this)" style="width: 100%; display: flex; justify-content: space-between; align-items: center; background: var(--surface-bg); border: 1px solid var(--surface-border); padding: 0.5rem 0.75rem; border-radius: 6px; cursor: pointer; color: var(--text-main); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                <span>Schedule & Locations</span>
+                <i class='bx bx-chevron-down toggle-icon' style="font-size: 1.2rem; transition: transform 0.3s;"></i>
+            </button>
+            <ul class="schedule-list" style="display: none; list-style: none; padding: 0; margin: 0.5rem 0 0 0; flex-direction: column; gap: 0.5rem;">
+                {% for s in info.schedule %}
+                <li style="font-size: 0.85rem; color: var(--text-main); background: var(--surface-bg); padding: 0.5rem; border-radius: 6px; border-left: 3px solid var(--primary);">
+                    <div style="font-weight: 600; color: var(--secondary); margin-bottom: 0.2rem;">{{ s.day }} <span style="color: var(--text-muted); font-weight: normal; font-size: 0.8rem;">({{ s.time }})</span></div>
+                    <div>{{ s.subject_code }} - {{ s.group_name }}</div>
+                    <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.2rem;"><i class='bx bx-map'></i> {{ s.room }}</div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+function toggleSchedule(button) {
+    const list = button.nextElementSibling;
+    const icon = button.querySelector('.toggle-icon');
+    if (list.style.display === "none") {
+        list.style.display = "flex";
+        icon.style.transform = "rotate(180deg)";
+    } else {
+        list.style.display = "none";
+        icon.style.transform = "rotate(0deg)";
+    }
+}
+function filterLecturers() {
+    const input = document.getElementById('lecturer-search').value.toUpperCase();
+    const cards = document.getElementsByClassName('lecturer-card');
+    
+    for (let i = 0; i < cards.length; i++) {
+        const nameElement = cards[i].querySelector('.lecturer-name');
+        if (nameElement) {
+            const name = nameElement.textContent || nameElement.innerText;
+            if (name.toUpperCase().indexOf(input) > -1) {
+                cards[i].style.display = "";
+            } else {
+                cards[i].style.display = "none";
+            }
+        }
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,343 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="header-section" style="text-align: left; margin-bottom: 2rem;">
+    <h1 style="margin-top: 0; display: flex; align-items: center; gap: 0.5rem;">
+        <i class='bx bx-group' style="color: var(--primary);"></i> Social Timetable Overlay
+    </h1>
+    <p>Find a friend by Matric Number to overlay your timetables and easily spot common free time!</p>
+</div>
+
+{% if not has_primary %}
+<div class="glass-card" style="border-left: 4px solid #EF4444; background: rgba(239, 68, 68, 0.1); margin-bottom: 2rem;">
+    <h3 style="color: #EF4444; margin-top: 0;"><i class='bx bx-error'></i> Action Required</h3>
+    <p style="color: var(--text-main);">You must set a <strong>Primary Timetable</strong> before you can use the Social Overlay feature.</p>
+    <a href="/student" class="btn-primary" style="display: inline-block; margin-top: 1rem; text-decoration: none;">Go to Generator & Set Primary</a>
+</div>
+{% else %}
+
+<div style="display: grid; grid-template-columns: 1fr; gap: 2rem;" id="social-layout">
+    <style>
+        @media (min-width: 992px) {
+            #social-layout { grid-template-columns: 300px 1fr; }
+        }
+    </style>
+    
+    <!-- Left Column: Saved Friends -->
+    <div>
+        <div class="glass-card">
+            <h3 style="margin-top: 0; color: var(--text-main);"><i class='bx bxs-user-detail'></i> Saved Friends</h3>
+            <div id="saved-friends-list" style="margin-top: 1rem;">
+                {% for f in saved_friends %}
+                <div class="friend-card" style="padding: 1rem; border: 1px solid var(--surface-border); border-radius: 8px; margin-bottom: 0.75rem; background: var(--surface-opaque); cursor: pointer; transition: all 0.2s ease;" onclick="fetchOverlay('{{ f.friend_matric }}')">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <div style="font-weight: 600; color: var(--primary); font-size: 0.95rem; margin-bottom: 0.25rem;">{{ f.friend_name }}</div>
+                            <div style="font-size: 0.85rem; color: var(--secondary);"><i class='bx bx-id-card'></i> {{ f.friend_matric }}</div>
+                        </div>
+                        <button onclick="removeFriend(event, {{ f.id }})" style="background: rgba(239, 68, 68, 0.1); border: none; color: #EF4444; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;" title="Remove Friend">
+                            <i class='bx bx-trash'></i>
+                        </button>
+                    </div>
+                </div>
+                {% else %}
+                <div style="text-align: center; padding: 2rem 0; opacity: 0.6;">
+                    <i class='bx bx-ghost' style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                    <p style="font-size: 0.9rem;">No friends saved yet.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Column: Overlay Matrix -->
+    <div>
+        <div class="glass-card" style="margin-bottom: 2rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="friend-search" style="font-size: 1.1rem; font-weight: 600; color: var(--secondary);">Enter Friend's Matric Number</label>
+                <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                    <input type="text" id="friend-search" class="form-control" style="flex: 1; padding: 1rem 1.5rem; font-size: 1.1rem; border: 2px solid var(--surface-border); border-radius: 8px; background: var(--input-bg); color: var(--text-main); text-transform: uppercase;" placeholder="e.g., B032110001">
+                    <button class="btn-primary" onclick="fetchOverlay()" id="fetch-btn" style="padding: 0 2rem;">
+                        <i class='bx bx-search'></i> Overlay
+                    </button>
+                </div>
+                <p id="social-error" style="color: #EF4444; margin-top: 1rem; display: none; font-weight: 500;"></p>
+                
+                <div id="save-friend-prompt" style="display: none; margin-top: 1.5rem; padding: 1rem; border: 1px dashed var(--primary); border-radius: 8px; background: rgba(14, 165, 233, 0.05); align-items: center; justify-content: space-between;">
+                    <div>
+                        <strong style="color: var(--primary);">Save this friend?</strong>
+                        <div style="font-size: 0.9rem; color: var(--secondary);">Add them to your list so you don't have to type their matric number next time.</div>
+                    </div>
+                    <button class="btn-primary" onclick="saveCurrentFriend()" id="save-friend-btn" style="padding: 0.5rem 1.5rem; font-size: 0.9rem;">
+                        <i class='bx bxs-user-plus'></i> Save
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="overlay-result" style="display: none;">
+            <div class="glass-card" style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 id="friend-name-display" style="margin: 0; color: var(--text-main);"></h2>
+                    <span id="friend-course-display" class="badge success" style="margin-top: 0.5rem; display: inline-block;"></span>
+                </div>
+                <div style="display: flex; gap: 1rem; font-size: 0.9rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="width: 16px; height: 16px; border-radius: 4px; background: var(--primary);"></div>
+                        <span style="color: var(--text-main);">My Classes</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="width: 16px; height: 16px; border-radius: 4px; background: #8B5CF6;"></div>
+                        <span style="color: var(--text-main);">Friend's Classes</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="width: 16px; height: 16px; border-radius: 4px; background: #EF4444;"></div>
+                        <span style="color: var(--text-main);">Overlap (Both in class)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="width: 16px; height: 16px; border-radius: 4px; background: #10B981; opacity: 0.2; border: 1px dashed #10B981;"></div>
+                        <span style="color: var(--text-main);">Free Time</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="timetable" id="overlay-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">Day</th>
+                            <th>08:00-09:00</th>
+                            <th>09:00-10:00</th>
+                            <th>10:00-11:00</th>
+                            <th>11:00-12:00</th>
+                            <th>12:00-13:00</th>
+                            <th>13:00-14:00</th>
+                            <th>14:00-15:00</th>
+                            <th>15:00-16:00</th>
+                            <th>16:00-17:00</th>
+                            <th>17:00-18:00</th>
+                            <th>18:00-19:00</th>
+                            <th>19:00-20:00</th>
+                            <th>20:00-21:00</th>
+                            <th>21:00-22:00</th>
+                            <th>22:00-23:00</th>
+                        </tr>
+                    </thead>
+                    <tbody id="overlay-tbody">
+                        <!-- JS will inject rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentFriendMatric = null;
+
+function fetchOverlay(presetMatric = null) {
+    const inputEl = document.getElementById('friend-search');
+    const matric = presetMatric || inputEl.value.trim();
+    
+    if (presetMatric) {
+        inputEl.value = presetMatric; // Fill the input if clicked from saved list
+    }
+    
+    const btn = document.getElementById('fetch-btn');
+    const err = document.getElementById('social-error');
+    const resultDiv = document.getElementById('overlay-result');
+    const savePrompt = document.getElementById('save-friend-prompt');
+    
+    if (!matric) {
+        err.textContent = "Please enter a matric number.";
+        err.style.display = "block";
+        return;
+    }
+    
+    err.style.display = "none";
+    savePrompt.style.display = "none";
+    btn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i>";
+    btn.disabled = true;
+    currentFriendMatric = null;
+    
+    fetch('/api/timetable/social', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ matric_no: matric })
+    })
+    .then(r => r.json())
+    .then(res => {
+        btn.innerHTML = "<i class='bx bx-search'></i> Overlay";
+        btn.disabled = false;
+        
+        if (res.error) {
+            err.textContent = res.error;
+            err.style.display = "block";
+            resultDiv.style.display = "none";
+        } else {
+            currentFriendMatric = matric;
+            document.getElementById('friend-name-display').textContent = res.friend_name;
+            document.getElementById('friend-course-display').textContent = res.friend_course;
+            resultDiv.style.display = "block";
+            renderOverlay(res.my_data, res.friend_data);
+            
+            // Show save prompt if not clicking from preset
+            if (!presetMatric) {
+                savePrompt.style.display = "flex";
+            }
+        }
+    })
+    .catch(error => {
+        btn.innerHTML = "<i class='bx bx-search'></i> Overlay";
+        btn.disabled = false;
+        err.textContent = "Network error. Please try again.";
+        err.style.display = "block";
+    });
+}
+
+function saveCurrentFriend() {
+    if (!currentFriendMatric) return;
+    const btn = document.getElementById('save-friend-btn');
+    const originalText = btn.innerHTML;
+    
+    btn.innerHTML = "<i class='bx bx-loader-alt bx-spin'></i>";
+    btn.disabled = true;
+    
+    fetch('/api/social/add_friend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ matric_no: currentFriendMatric })
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.error) {
+            alert(res.error);
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        } else {
+            window.location.reload(); // Refresh to show new friend in the sidebar
+        }
+    })
+    .catch(err => {
+        alert("Network error.");
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    });
+}
+
+function removeFriend(event, id) {
+    event.stopPropagation(); // Prevent clicking the card
+    if (!confirm("Remove this friend from your saved list?")) return;
+    
+    fetch(`/api/social/remove_friend/${id}`, {
+        method: 'DELETE'
+    })
+    .then(r => r.json())
+    .then(res => {
+        if (res.error) {
+            alert(res.error);
+        } else {
+            window.location.reload(); // Refresh to update list
+        }
+    })
+    .catch(err => alert("Network error."));
+}
+
+function timeToIndex(timeStr) {
+    if (!timeStr) return -1;
+    let parts = timeStr.split(':');
+    let h = parseInt(parts[0]);
+    if (h >= 8 && h <= 22) return h - 8;
+    return -1;
+}
+
+function renderOverlay(myCombo, friendCombo) {
+    const tbody = document.getElementById('overlay-tbody');
+    tbody.innerHTML = '';
+    
+    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    
+    // Create matrices
+    let myGrid = {};
+    let friendGrid = {};
+    days.forEach(d => {
+        myGrid[d] = new Array(15).fill(null);
+        friendGrid[d] = new Array(15).fill(null);
+    });
+    
+    // Fill myGrid
+    myCombo.forEach(bundle => {
+        bundle.classes.forEach(cls => {
+            let day = cls.day;
+            let startIdx = timeToIndex(cls.start_time);
+            let endIdx = timeToIndex(cls.end_time);
+            if (myGrid[day] && startIdx !== -1 && endIdx !== -1) {
+                for (let i = startIdx; i < endIdx; i++) {
+                    myGrid[day][i] = cls;
+                }
+            }
+        });
+    });
+    
+    // Fill friendGrid
+    friendCombo.forEach(bundle => {
+        bundle.classes.forEach(cls => {
+            let day = cls.day;
+            let startIdx = timeToIndex(cls.start_time);
+            let endIdx = timeToIndex(cls.end_time);
+            if (friendGrid[day] && startIdx !== -1 && endIdx !== -1) {
+                for (let i = startIdx; i < endIdx; i++) {
+                    friendGrid[day][i] = cls;
+                }
+            }
+        });
+    });
+    
+    // Render HTML
+    days.forEach(day => {
+        let tr = document.createElement('tr');
+        let th = document.createElement('td');
+        th.style.fontWeight = 'bold';
+        th.style.background = 'var(--surface-opaque)';
+        th.style.color = 'var(--text-main)';
+        th.textContent = day;
+        tr.appendChild(th);
+        
+        for (let i = 0; i < 15; i++) {
+            let td = document.createElement('td');
+            
+            let myCls = myGrid[day][i];
+            let frCls = friendGrid[day][i];
+            
+            if (myCls && frCls) {
+                // Both busy
+                td.style.background = '#EF4444'; // Red clash
+                td.style.color = '#FFFFFF';
+                td.innerHTML = `<div style="font-size:0.75rem; font-weight:600; line-height:1.1;">OVERLAP<br>Both Busy</div>`;
+            } else if (myCls) {
+                // Just me
+                td.style.background = 'var(--primary)';
+                td.style.color = '#FFFFFF';
+                td.innerHTML = `<div style="font-size:0.75rem; font-weight:600; line-height:1.1;">${myCls.subject_code}<br>(Me)</div>`;
+            } else if (frCls) {
+                // Just friend
+                td.style.background = '#8B5CF6'; // Purple
+                td.style.color = '#FFFFFF';
+                td.innerHTML = `<div style="font-size:0.75rem; font-weight:600; line-height:1.1;">${frCls.subject_code}<br>(Friend)</div>`;
+            } else {
+                // Both free
+                td.style.background = 'rgba(16, 185, 129, 0.1)'; // Light Green
+                td.innerHTML = ``;
+            }
+            
+            // Add border for clarity
+            td.style.border = '1px solid var(--surface-border)';
+            tr.appendChild(td);
+        }
+        
+        tbody.appendChild(tr);
+    });
+}
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>High-Level Class Diagram</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    body { background: white; font-family: 'Inter', sans-serif; padding: 40px; text-align: center; }
+    .mermaid { display: flex; justify-content: center; }
+  </style>
+</head>
+<body>
+  <h2>High-Level Class Diagram</h2>
+  <div class="mermaid">
+classDiagram
+    class User {
+        +Integer id
+        +String name
+        +String email
+        +String password_hash
+        +String role
+        +String username
+        +String matric_no
+        +String year
+        +String course
+        +String group_name
+        +set_password(password)
+        +check_password(password) Boolean
+    }
+
+    class Timetable {
+        +Integer id
+        +String course_code
+        +String semester
+        +String group_name
+        +String subject_code
+        +String subject_name
+        +String class_type
+        +String day
+        +Time start_time
+        +Time end_time
+        +String room
+        +String lecturer_name
+        +to_dict() Dictionary
+    }
+
+    class SavedTimetable {
+        +Integer id
+        +Integer user_id
+        +String name
+        +Text data
+        +Boolean is_primary
+        +DateTime created_at
+        +to_dict() Dictionary
+    }
+
+    class SavedFriend {
+        +Integer id
+        +Integer user_id
+        +String friend_matric
+        +String friend_name
+        +DateTime created_at
+        +to_dict() Dictionary
+    }
+
+    class LecturerProfile {
+        +Integer id
+        +String name
+        +String title
+        +String email
+        +String department
+        +String block
+        +String office_room
+        +to_dict() Dictionary
+    }
+
+    User "1" --> "0..*" SavedTimetable : has
+    User "1" --> "0..*" SavedFriend : adds
+    SavedFriend "0..*" --> "1" User : maps to (by matric_no)
+    Timetable "0..*" .. "1" LecturerProfile : fuzzy matched by name
+  </div>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        background: '#ffffff',
+        primaryColor: '#ffffff',
+        primaryTextColor: '#000000',
+        primaryBorderColor: '#000000',
+        lineColor: '#000000',
+        fontFamily: 'Inter, sans-serif'
+      }
+    });
+  </script>
+</body>
+</html>

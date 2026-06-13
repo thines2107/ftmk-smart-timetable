@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="header-section" style="text-align: left; margin-bottom: 2rem;">
+    <h1 style="margin-top: 0; display: flex; align-items: center; gap: 0.5rem;">
+        <i class='bx bx-line-chart' style="color: var(--primary);"></i> Semester Analytics
+    </h1>
+    <p>A statistical breakdown of your Primary Timetable.</p>
+</div>
+
+{% if not has_primary %}
+<div class="glass-card" style="border-left: 4px solid #EF4444; background: rgba(239, 68, 68, 0.1); margin-bottom: 2rem;">
+    <h3 style="color: #EF4444; margin-top: 0;"><i class='bx bx-error'></i> Action Required</h3>
+    <p style="color: var(--text-main);">You must set a <strong>Primary Timetable</strong> before viewing analytics.</p>
+    <a href="/student" class="btn-primary" style="display: inline-block; margin-top: 1rem; text-decoration: none;">Go to Generator & Set Primary</a>
+</div>
+{% else %}
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+    <!-- Stat Card 1 -->
+    <div class="glass-card" style="text-align: center; padding: 2rem 1rem;">
+        <i class='bx bx-book-open' style="font-size: 2.5rem; color: var(--primary); margin-bottom: 0.5rem;"></i>
+        <h2 style="margin: 0; font-size: 2rem; color: var(--text-main);">{{ stats.total_classes }}</h2>
+        <p style="margin: 0; color: var(--secondary); font-size: 0.9rem;">Total Classes / Week</p>
+    </div>
+    
+    <!-- Stat Card 2 -->
+    <div class="glass-card" style="text-align: center; padding: 2rem 1rem;">
+        <i class='bx bx-time-five' style="font-size: 2.5rem; color: #10B981; margin-bottom: 0.5rem;"></i>
+        <h2 style="margin: 0; font-size: 2rem; color: var(--text-main);">{{ stats.total_hours }}</h2>
+        <p style="margin: 0; color: var(--secondary); font-size: 0.9rem;">Hours in Class / Week</p>
+    </div>
+    
+    <!-- Stat Card 3 -->
+    <div class="glass-card" style="text-align: center; padding: 2rem 1rem;">
+        <i class='bx bxs-hot' style="font-size: 2.5rem; color: #EF4444; margin-bottom: 0.5rem;"></i>
+        <h2 style="margin: 0; font-size: 2rem; color: var(--text-main);">{{ stats.busiest_day }}</h2>
+        <p style="margin: 0; color: var(--secondary); font-size: 0.9rem;">Busiest Day</p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr; gap: 2rem;" id="charts-layout">
+    <style>
+        @media (min-width: 992px) {
+            #charts-layout { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+    
+    <!-- Chart 1 -->
+    <div class="glass-card">
+        <h3 style="margin-top: 0; margin-bottom: 1.5rem; color: var(--text-main); font-size: 1.1rem;">Class Types Breakdown</h3>
+        <div style="position: relative; height: 300px; width: 100%;">
+            <canvas id="typeChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Chart 2 -->
+    <div class="glass-card">
+        <h3 style="margin-top: 0; margin-bottom: 1.5rem; color: var(--text-main); font-size: 1.1rem;">Daily Workload (Hours)</h3>
+        <div style="position: relative; height: 300px; width: 100%;">
+            <canvas id="dayChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Data from backend
+    const typeCount = {{ stats.type_count | tojson }};
+    const daysCount = {{ stats.days_count | tojson }};
+    
+    // Theme colors
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const textColor = isDark ? '#e2e8f0' : '#1e293b';
+    const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+
+    // 1. Pie Chart for Class Types
+    const ctxType = document.getElementById('typeChart').getContext('2d');
+    new Chart(ctxType, {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(typeCount),
+            datasets: [{
+                data: Object.values(typeCount),
+                backgroundColor: [
+                    '#3B82F6', // Blue (Lecture)
+                    '#10B981'  // Green (Lab)
+                ],
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: textColor, padding: 20 }
+                }
+            }
+        }
+    });
+
+    // 2. Bar Chart for Daily Workload
+    const ctxDay = document.getElementById('dayChart').getContext('2d');
+    
+    // Sort days chronologically
+    const orderedDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+    const dayData = orderedDays.map(d => daysCount[d] || 0);
+    
+    new Chart(ctxDay, {
+        type: 'bar',
+        data: {
+            labels: orderedDays,
+            datasets: [{
+                label: 'Hours',
+                data: dayData,
+                backgroundColor: '#8B5CF6',
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: gridColor },
+                    ticks: { color: textColor }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: textColor }
+                }
+            }
+        }
+    });
+</script>
+
+{% endif %}
+{% endblock %}
