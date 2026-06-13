@@ -46,7 +46,7 @@
             <div class="form-group-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem;">
                 <div class="form-group">
                     <label>Course</label>
-                    <input type="text" name="course" class="premium-input" value="{{ current_user.course }}">
+                    <input type="text" name="course" class="premium-input" value="{{ current_user.course }}" readonly style="opacity: 0.5; cursor: not-allowed;" title="Course cannot be changed here.">
                 </div>
                 <div class="form-group">
                     <label>Year</label>
@@ -54,7 +54,7 @@
                 </div>
                 <div class="form-group">
                     <label>Group Name</label>
-                    <input type="text" name="group_name" class="premium-input" value="{{ current_user.group_name }}">
+                    <input type="text" name="group_name" class="premium-input" value="{{ current_user.group_name }}" oninput="this.value = this.value.toUpperCase()">
                 </div>
             </div>
             {% endif %}
