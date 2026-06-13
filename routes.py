@@ -1118,6 +1118,7 @@ def profile():
             if file and file.filename != '':
                 filename = secure_filename(f"user_{user.id}_{file.filename}")
                 filepath = os.path.join(current_app.root_path, 'static', 'uploads', 'profile_pics', filename)
+                os.makedirs(os.path.dirname(filepath), exist_ok=True)
                 file.save(filepath)
                 user.profile_pic = filename
                 db.session.commit()
