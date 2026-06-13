@@ -814,6 +814,7 @@ def handle_upload():
         filename = secure_filename(file.filename)
         # Using a fixed uploads path
         filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', filename)
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
         file.save(filepath)
         task_id = str(uuid.uuid4())
         app = current_app._get_current_object()
