@@ -902,7 +902,7 @@ def api_generate_timetable():
         base_query = Timetable.query.filter_by(subject_code=subj)
         
         if not allow_cross_course and student_course:
-            classes = base_query.filter_by(course_code=student_course).all()
+            classes = base_query.filter(Timetable.course_code.ilike(f"%{student_course}%")).all()
         else:
             classes = base_query.all()
             
