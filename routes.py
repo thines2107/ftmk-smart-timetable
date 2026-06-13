@@ -16,6 +16,25 @@ from itsdangerous import URLSafeTimedSerializer
 
 bp = Blueprint('main', __name__)
 
+@bp.route('/seed_admin_fptt')
+def seed_admin_fptt():
+    try:
+        if not User.query.filter_by(username='admin_fptt').first():
+            new_admin = User(
+                username='admin_fptt',
+                name='Admin FPTT',
+                email='admin_fptt@utem.edu.my',
+                role='admin',
+                matric_no='ADMIN02'
+            )
+            new_admin.set_password('admin')
+            db.session.add(new_admin)
+            db.session.commit()
+            return "Success: Admin FPTT created (username: admin_fptt, pass: admin)"
+        return "Admin FPTT already exists"
+    except Exception as e:
+        return str(e)
+
 @bp.context_processor
 def inject_user():
     if 'user_id' in session:
