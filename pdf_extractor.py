@@ -147,6 +147,11 @@ def extract_timetable_from_pdf(filepath, progress_dict=None, task_id=None, semes
                                     })
                                     time_idx += span - 1 # Skip spanned columns
                             time_idx += 1
+            
+            # Memory optimization: clear cache for this page
+            page.flush_cache()
+            import gc
+            gc.collect()
 
     # Attach subject_name from mapping
     for data in extracted_data:
