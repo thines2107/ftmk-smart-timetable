@@ -907,9 +907,7 @@ def api_generate_timetable():
             classes = base_query.all()
             
         if not classes:
-            continue
-            
-        if not classes:
+            subjects_data[subj] = []
             continue
             
         # Determine if this subject requires a LAB and/or LEC globally
