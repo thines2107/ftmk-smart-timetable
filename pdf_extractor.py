@@ -44,6 +44,14 @@ def extract_timetable_from_pdf(filepath, progress_dict=None, task_id=None, semes
                     clean_line = re.sub(r'\b08\b|\b09\b', '', clean_line) # strip grid boundary numbers
                     clean_line = clean_line.strip()
                     
+                    kelas_match = re.search(r'(?i)KELAS:\s*(.+)', clean_line)
+                    if kelas_match:
+                        kelas_str = kelas_match.group(1).strip()
+                        parts = kelas_str.split()
+                        current_course_code = parts[1] if len(parts) >= 2 else kelas_str
+                        current_group_name = kelas_str
+                        break
+                        
                     match = re.search(r'^([A-Za-z0-9\-\(\)&\.\s]+?)\s+(S\d+(?:G\d+)?(?:(?:-|_)[A-Za-z0-9]+)?)\b', clean_line)
                     if match:
                         current_course_code = match.group(1).strip()
@@ -51,12 +59,12 @@ def extract_timetable_from_pdf(filepath, progress_dict=None, task_id=None, semes
                         break
                         
                     # Fallback for standalone headers that completely lack a Group ID (e.g. "FEEDER DCS BITM")
-                    # We check if it strictly has uppercase words and contains known FTMK acronyms
+                    # We check if it strictly has uppercase words and contains known UTeM acronyms
                     match_fallback = re.search(r'^([A-Z0-9\-\(\)&\.\s]{5,})$', clean_line)
                     if match_fallback:
                         pot_course = match_fallback.group(1).strip()
                         # Reject plain English or layout artifacts, accept specifically if it looks like a UTeM course
-                        if not re.search(r'[a-z]', pot_course) and any(x in pot_course for x in ['BIT', 'DCS', 'FEEDER', 'DIP']):
+                        if not re.search(r'[a-z]', pot_course) and any(x in pot_course for x in ['BIT', 'DCS', 'FEEDER', 'DIP', 'BTM', 'BTEC', 'BTV']):
                             current_course_code = pot_course
                             current_group_name = "UNKNOWN GROUP"
                             break
