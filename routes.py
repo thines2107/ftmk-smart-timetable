@@ -368,9 +368,9 @@ def student_analytics():
                 # Class Type count
                 ctype = cls.get('class_type', '').upper()
                 if 'KUL' in ctype or 'LEC' in ctype:
-                    type_count['Lecture'] += diff
+                    type_count['Lecture'] += 1
                 elif 'MAK' in ctype or 'LAB' in ctype:
-                    type_count['Lab'] += diff
+                    type_count['Lab'] += 1
             except Exception as e:
                 pass
                 
